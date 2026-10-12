@@ -1,0 +1,14 @@
+{
+    "format": "dnshe-accounts",
+    "version": 1,
+    "exportedAt": 1791275623346,
+    "accounts": [
+        {
+            "name": "PC主号",
+            "apiKey": "cfsd_0adc0ce77bc62a2903caf044ddb877a5",
+            "apiSecret": "64a3373ce95ad3e1561db424ac2a412b0d95bc830f8d96a1236883f67dd9548d",
+            "defaultRootDomain": "",
+            "memo": ""
+        }
+    ]
+}

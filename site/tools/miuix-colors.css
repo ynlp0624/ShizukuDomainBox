@@ -1,0 +1,50 @@
+/* 提取自 Miuix 0.9.4 的 Colors.kt（HyperOS 原生配色） */
+:root {
+  --miuix-primary: #3482FF;
+  --miuix-primary-variant: #3482FF;
+  --miuix-primary-container: #5D9BFF;
+  --miuix-on-background-variant: #8C93B0;
+  --miuix-surface: #F7F7F7;
+  --miuix-on-surface-secondary: #000000;
+  --miuix-on-surface-variant-summary: #000000;
+  --miuix-on-surface-variant-actions: #000000;
+  --miuix-surface-container-high: #E8E8E8;
+  --miuix-surface-container-highest: #E8E8E8;
+  --miuix-secondary: #E6E6E6;
+  --miuix-secondary-container: #F0F0F0;
+  --miuix-on-secondary-container: #A9A9A9;
+  --miuix-error: #E94634;
+  --miuix-on-error: #FFFFFF;
+  --miuix-error-container: #FDF6F4;
+  --miuix-on-error-container: #410002;
+  --miuix-outline: #D9D9D9;
+  --miuix-divider-line: #E0E0E0;
+  --miuix-disabled-on-surface: #B2B2B2;
+}
+
+[data-theme="dark"] {
+  --miuix-primary: #277AF7;
+  --miuix-primary-variant: #0073DD;
+  --miuix-primary-container: #338FE4;
+  --miuix-background: #242424;
+  --miuix-on-background: #FFFFFF;
+  --miuix-on-background-variant: #787E96;
+  --miuix-on-surface: #F2F2F2;
+  --miuix-surface-variant: #242424;
+  --miuix-on-surface-secondary: #FFFFFF;
+  --miuix-on-surface-variant-summary: #FFFFFF;
+  --miuix-on-surface-variant-actions: #FFFFFF;
+  --miuix-surface-container: #242424;
+  --miuix-on-surface-container: #FFFFFF;
+  --miuix-surface-container-high: #242424;
+  --miuix-surface-container-highest: #2D2D2D;
+  --miuix-secondary: #505050;
+  --miuix-secondary-container: #434343;
+  --miuix-on-secondary-container: #7C7C7C;
+  --miuix-error: #F12522;
+  --miuix-error-container: #2E0603;
+  --miuix-on-error-container: #FFDAD6;
+  --miuix-outline: #404040;
+  --miuix-divider-line: #393939;
+  --miuix-disabled-on-surface: #666666;
+}

@@ -1,0 +1,48 @@
+{
+  "_说明": "把打包器自己当成一个产品来打包 —— 用自己的工具打自己的包，最彻底的自我验证。",
+  "_路径说明": "相对路径以本文件所在目录（D:\\installer-kit）为基准。",
+
+  "productName": "InstallerKit 打包器",
+  "appId": "InstallerKitPacker",
+  "version": "1.0.0",
+  "publisher": "Shizuku Studio",
+  "copyright": "(c) 2026 Shizuku Studio",
+
+  "iconFile": "packer/icons/app.ico",
+  "logoFile": "packer/src/main/resources/app-logo.png",
+  "windowIconSizes": [16, 20, 24, 32, 40, 48, 64, 96, 128, 256],
+  "windowIconDir": "packer/src/main/resources",
+  "brandColor": "#3E6FD9",
+
+  "licenseFile": "",
+  "urlInfoAbout": "https://example.com/",
+  "helpLink": "https://example.com/help",
+
+  "buildRoot": ".",
+  "buildTask": ":packer:createDistributable",
+  "mainAppDir": "packer/build/compose/binaries/main/app/InstallerKitPacker",
+  "mainExeName": "InstallerKitPacker.exe",
+  "installDirName": "InstallerKitPacker",
+  "dataDirName": "InstallerKitPacker",
+  "estimatedSizeMb": 120,
+
+  "defaultPerUser": true,
+  "allowScopeChoice": true,
+  "defaultDesktopShortcut": true,
+  "defaultStartMenu": true,
+  "launchAfterInstall": true,
+
+  "uninstallKeepDataByDefault": true,
+  "killRunningAppOnUninstall": true,
+
+  "codeSign": {
+    "enabled": true,
+    "toolsDir": "D:/sing/codesign",
+    "profile": "studio",
+    "timestamp": false,
+    "signInstaller": true,
+    "signStageFiles": true,
+    "includeGlobs": ["*.exe"],
+    "verify": true
+  }
+}

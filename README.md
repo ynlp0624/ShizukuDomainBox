@@ -30,7 +30,7 @@
 | 平台 | 文件 | 大小 | 系统要求 |
 |---|---|---|---|
 | Android | `ShizukuDomainBox-Android-v2.0.0.apk` | 约 11 MB | Android 8.0+ |
-| Windows | `ShizukuDomainBox-Setup-v2.0.0.exe` | 约 96 MB | Windows 10/11 x64 |
+| Windows | `ShizukuDomainBox-Setup-v2.0.0.exe` | 约 104 MB | Windows 10/11 x64 |
 
 也可以直接从官网下载：<https://dnshe.shizuku.plus>
 
@@ -99,7 +99,7 @@ keyAlias=***
 keyPassword=***
 ```
 
-（仓库里**不含**任何签名密钥）
+（仓库里**不含**任何签名密钥，详见 `android/keystore/README.md`）
 
 ### Windows 版
 
@@ -128,6 +128,7 @@ export JAVA_HOME=/path/to/jdk-21
 4. **jpackage 的参数文件按系统编码读**，`packageName` / `description` 里写中文会直接报
    `Input length = 1` 构建失败，所以 jpackage 层全用 ASCII。
 5. **运行中的 JVM 会锁住自己的 jar**，卸载时删不掉 `app/*.jar`，得靠延迟批处理循环重试。
+6. **`compileSdk` 必须 ≥ 37**，因为 Miuix 的 AAR metadata 强制检查（即使只引入依赖也会触发）。
 
 更多细节见 `android/MIGRATION-ANDROID.md`、`pc/MIGRATION-PC.md`、`site/DEPLOY.md`。
 

@@ -1,0 +1,9 @@
+{
+    "format": "dnshe-backup",
+    "version": 1,
+    "kdf": "PBKDF2WithHmacSHA256",
+    "iterations": 120000,
+    "salt": "dQFQdjharETdD8nrsVqleg==",
+    "iv": "wJcWAAZNtFf5tlYB",
+    "data": "tPh1NN2dj2zAJc0VoxROgVh3dFsDjTZg3sril75RsRi0rxJEUKZ1aRkenCPCIFODYFXizMItSqE5YDQBIJQFexO1Bw9seSAZ1HclnkTt2wWqy2z8QnEJEixMMLEQLzN3Uu7NsHcpxCtrgyH90Q9zZwjkOuHCo+6Hbsf+vpkrHPSvwocVaKtEMD9+76L0CMq8ihylu0CHEjW5cJMTIX9b2Fde/lV8LkAjMK1Zcfgkjxn/RBdBpiXA1El8Bce6tkGEBCBnEBrYGwBB94Zixv/EK28CMpcMUNij1rva5FJ6zw61g3wzCx+lfml7oOaSXfpE0MQLVxqG4qsax6G2qCoX2FOLdSHYNC/lDXzaj5dl8ZMxF8tjwOrbDu0npTvUV2Fmckl/5PGu3jp/xYdFJBDTIEP+P0np46waZIrQThV5p5wxvPAslOIn3ztSyQdetartox/X7y/4W2idpi/uEV1un+UAWRVFHF3yVBauqN8rGaMX1EjZv9B43GP7A1ZUf+CYnVAioNxpO3599A40"
+}

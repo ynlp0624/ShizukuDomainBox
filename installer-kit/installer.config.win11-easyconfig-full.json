@@ -1,0 +1,45 @@
+{
+  "_说明": "同一个绿色软件，改用**和 jpackage 模式一模一样的那套 Compose 向导**来装。",
+  "_代价": "安装包要多背约 57MB 运行时（产品本身才 0.6MB）—— 对比 installer.config.win11-easyconfig.json（轻量向导，0.5MB）。",
+  "_实现": "这次产品没有 jpackage 启动器可以劫持，所以是安装器自己当安装器：InstallerKit.exe 改名成 Setup.exe。",
+
+  "productName": "Windows11轻松设置",
+  "appId": "Win11EasyConfig",
+  "version": "1.1.2",
+  "publisher": "",
+  "copyright": "Copyright © 2025",
+
+  "installMode": "portable",
+  "portableWizard": "full",
+
+  "brandColor": "#3E6FD9",
+  "logoFile": "samples/demo-app/src/main/resources/app-logo.png",
+  "windowIconDir": "samples/demo-app/src/main/resources",
+
+  "buildRoot": ".",
+  "buildTask": "",
+  "mainAppDir": "C:/Users/mynlp/Downloads/Windows11轻松设置1.12正式版/Windows11轻松设置1.12正式版",
+  "mainExeName": "Windows11轻松设置.exe",
+  "installDirName": "Windows11轻松设置",
+  "dataDirName": "Windows11轻松设置",
+  "estimatedSizeMb": 120,
+
+  "defaultPerUser": true,
+  "defaultDesktopShortcut": true,
+  "defaultStartMenu": true,
+  "launchAfterInstall": true,
+
+  "uninstallKeepDataByDefault": true,
+  "killRunningAppOnUninstall": true,
+
+  "codeSign": {
+    "enabled": true,
+    "toolsDir": "D:/sing/codesign",
+    "profile": "studio",
+    "timestamp": false,
+    "signInstaller": true,
+    "signStageFiles": true,
+    "includeGlobs": ["*.exe"],
+    "verify": true
+  }
+}

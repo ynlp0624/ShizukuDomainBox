@@ -1,0 +1,42 @@
+{
+  "_说明": "把「Windows11轻松设置」这种绿色软件（一个 exe + 一堆文件）打包成安装包。",
+  "_要点": "installMode = portable → 用系统自带的 .NET 跑轻量向导，安装包只比原程序大几十 KB，不背 57MB 运行时。",
+  "_来源": "C:\\Users\\mynlp\\Downloads\\Windows11轻松设置1.12正式版 —— 原 exe 的版本信息：Win11EasyConfig / FileDescription=Windows11轻松设置 / 1.1.2.0",
+
+  "productName": "Windows11轻松设置",
+  "appId": "Win11EasyConfig",
+  "version": "1.1.2",
+  "publisher": "",
+  "copyright": "Copyright © 2025",
+
+  "installMode": "portable",
+
+  "brandColor": "#3E6FD9",
+
+  "buildRoot": ".",
+  "buildTask": "",
+  "mainAppDir": "C:/Users/mynlp/Downloads/Windows11轻松设置1.12正式版/Windows11轻松设置1.12正式版",
+  "mainExeName": "Windows11轻松设置.exe",
+  "installDirName": "Windows11轻松设置",
+  "dataDirName": "Windows11轻松设置",
+  "estimatedSizeMb": 2,
+
+  "defaultPerUser": true,
+  "defaultDesktopShortcut": true,
+  "defaultStartMenu": true,
+  "launchAfterInstall": true,
+
+  "uninstallKeepDataByDefault": true,
+  "killRunningAppOnUninstall": true,
+
+  "codeSign": {
+    "enabled": true,
+    "toolsDir": "D:/sing/codesign",
+    "profile": "studio",
+    "timestamp": false,
+    "signInstaller": true,
+    "signStageFiles": false,
+    "includeGlobs": ["*.exe"],
+    "verify": true
+  }
+}

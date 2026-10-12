@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>雫的域名盒 · DNSHE 免费域名多账号管理工具</title>
+<meta name="description" content="雫的域名盒 —— DNSHE 免费域名的多账号管理工具。安卓与 Windows 双端，账号密钥本机加密，JSON 备份双向互通，支持子域名注册、DNS 记录管理、配额查询、Whois、永久升级。">
+<meta name="theme-color" content="#3E6FD9">
+<meta property="og:title" content="雫的域名盒 · DNSHE 免费域名多账号管理工具">
+<meta property="og:description" content="安卓 + Windows 双端，多账号管理、DNS 记录增删改查、JSON 备份双向互通。">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css?v=1">
+</head>
+<body>
+
+<!-- ============ 顶部导航 ============ -->
+<header class="nav" id="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top">
+      <img class="brand-logo" src="assets/logo-64.png" alt="雫的域名盒">
+      <span class="brand-text">
+        <strong>雫的域名盒</strong>
+        <em>ShizukuDomainBox</em>
+      </span>
+    </a>
+
+    <nav class="nav-links" id="navLinks">
+      <a href="#features">功能</a>
+      <a href="#shots">界面</a>
+      <a href="#download">下载</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeBtn" type="button" aria-label="切换主题">
+        <svg class="ico ico-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.6M12 18.8v2.6M4.2 12H1.6M22.4 12h-2.6M6.34 6.34 4.5 4.5M19.5 19.5l-1.84-1.84M17.66 6.34 19.5 4.5M4.5 19.5l1.84-1.84"/></svg>
+        <svg class="ico ico-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 14.3A8.5 8.5 0 0 1 9.7 3.5a8.6 8.6 0 1 0 10.8 10.8Z"/></svg>
+      </button>
+      <a class="btn btn-primary btn-sm" href="#download">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4v11.2M7.6 10.4 12 14.8l4.4-4.4M4.6 19.6h14.8"/></svg>
+        立即下载
+      </a>
+      <button class="icon-btn menu-btn" id="menuBtn" type="button" aria-label="菜单">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ============ Hero ============ -->
+<section class="hero">
+  <div class="hero-bg" aria-hidden="true">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="grid-lines"></span>
+  </div>
+
+  <div class="wrap hero-inner">
+    <div class="hero-copy">
+      <span class="pill">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 4.4 6.6v5.1c0 4.6 3.2 8 7.6 9.1 4.4-1.1 7.6-4.5 7.6-9.1V6.6Z"/><path d="m8.9 12.1 2.2 2.2 4-4.2"/></svg>
+        密钥本机加密 · 数据不外传
+      </span>
+
+      <h1>
+        DNSHE 免费域名的<br>
+        <span class="grad">多账号管理工具</span>
+      </h1>
+
+      <p class="lede">
+        一个账号一个密钥太麻烦？把它们收进一个盒子。
+        注册子域名、增删改查解析记录、查配额、看 Whois、申请永久升级——
+        安卓和 Windows 双端体验一致，备份文件还能互相导入。
+      </p>
+
+      <div class="hero-cta">
+        <a class="btn btn-primary btn-lg" href="downloads/ShizukuDomainBox-Android-v1.1.1.apk" download>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.6v7.2a1.2 1.2 0 0 0 1.2 1.2h9.6a1.2 1.2 0 0 0 1.2-1.2V9.6M6 9.6h12M6 9.6a6 6 0 0 1 12 0M9.6 6.3l-1-1.7M14.4 6.3l1-1.7"/><circle cx="9.6" cy="12.6" r=".7" fill="currentColor" stroke="none"/><circle cx="14.4" cy="12.6" r=".7" fill="currentColor" stroke="none"/></svg>
+          下载安卓版
+          <small>APK · 7.5 MB</small>
+        </a>
+        <a class="btn btn-ghost btn-lg" href="downloads/ShizukuDomainBox-Setup-v1.0.0.exe" download>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 4.2h6.4v6.4H4.2zM13.4 4.2h6.4v6.4h-6.4zM4.2 13.4h6.4v6.4H4.2zM13.4 13.4h6.4v6.4h-6.4z"/></svg>
+          下载 Windows 版
+          <small>安装程序 · 96 MB</small>
+        </a>
+      </div>
+
+      <ul class="hero-facts">
+        <li><b>2</b><span>支持平台</span></li>
+        <li><b>100%</b><span>本机存储</span></li>
+        <li><b>JSON</b><span>双端互通</span></li>
+        <li><b>0</b><span>遥测上报</span></li>
+      </ul>
+    </div>
+
+    <div class="hero-visual">
+      <div class="phone">
+        <img src="assets/shots/android-domains.png" alt="雫的域名盒 安卓版 · 域名列表" width="360" height="780" loading="eager">
+      </div>
+      <div class="float-card float-card-1">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.2 6.6h7l1.8 2h8.8v9.2a1.6 1.6 0 0 1-1.6 1.6H4.8a1.6 1.6 0 0 1-1.6-1.6Z"/></svg>
+        <div><b>多账号</b><span>一键切换</span></div>
+      </div>
+      <div class="float-card float-card-2">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 4.4 6.6v5.1c0 4.6 3.2 8 7.6 9.1 4.4-1.1 7.6-4.5 7.6-9.1V6.6Z"/></svg>
+        <div><b>DPAPI</b><span>密钥加密</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 功能 ============ -->
+<section class="section" id="features">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="eyebrow">功能</span>
+      <h2>把 DNSHE 的日常操作，收进一个盒子</h2>
+      <p>从注册域名到日常改解析，不用再反复登录网页后台。</p>
+    </header>
+
+    <div class="grid grid-3">
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.2 6.6h7l1.8 2h8.8v9.2a1.6 1.6 0 0 1-1.6 1.6H4.8a1.6 1.6 0 0 1-1.6-1.6Z"/></svg>
+        </span>
+        <h3>多账号管理</h3>
+        <p>添加任意数量的 DNSHE 账号，顶部一键切换。每个账号独立保存密钥、默认根域名和备注，互不干扰。</p>
+      </article>
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.6"/><path d="M3.4 12h17.2M12 3.4c2.2 2.4 3.3 5.4 3.3 8.6S14.2 18.2 12 20.6c-2.2-2.4-3.3-5.4-3.3-8.6S9.8 5.8 12 3.4Z"/></svg>
+        </span>
+        <h3>子域名注册</h3>
+        <p>在自己的根域名下注册新的免费子域名。官方根域名和外部根域名分开标注，外部域名有醒目的风险提示。</p>
+      </article>
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6.2h16M4 12h16M4 17.8h16"/><circle cx="7.6" cy="6.2" r="1.5" fill="currentColor" stroke="none"/><circle cx="10.6" cy="12" r="1.5" fill="currentColor" stroke="none"/><circle cx="13.6" cy="17.8" r="1.5" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <h3>DNS 记录管理</h3>
+        <p>A / AAAA / CNAME / MX / TXT / NS / SRV / CAA 全类型增删改查，改完立刻生效，不用逐个打开网页。</p>
+      </article>
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2 4.4 6.6v5.1c0 4.6 3.2 8 7.6 9.1 4.4-1.1 7.6-4.5 7.6-9.1V6.6Z"/><path d="M12 10.6v3.2M12 8.2v.2"/></svg>
+        </span>
+        <h3>密钥本机加密</h3>
+        <p>安卓用 Keystore、Windows 用 DPAPI，按当前用户加密保存。密钥不会以明文落在磁盘上，也不会上传到任何服务器。</p>
+      </article>
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 12a8.4 8.4 0 1 1-2.5-6"/><path d="M20.6 4.6v4.8h-4.8"/></svg>
+        </span>
+        <h3>JSON 备份互通</h3>
+        <p>导出的备份格式两端逐字段一致。明文备份便于查看，口令备份用 PBKDF2 + AES-256-GCM 加密，手机导电脑、电脑导手机都行。</p>
+      </article>
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.4 19.6V10M9.6 19.6V4.4M14.8 19.6v-6.4M20 19.6V7.2"/></svg>
+        </span>
+        <h3>配额与密钥</h3>
+        <p>实时查看域名配额用量、API 密钥列表和调用次数，密钥直接生成、复制、删除。</p>
+      </article>
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.6"/><path d="m15.8 15.8 4.6 4.6"/></svg>
+        </span>
+        <h3>Whois 与永久升级</h3>
+        <p>查询域名注册状态，管理永久升级申请。都能在 App 里完成，不用来回切浏览器。</p>
+      </article>
+
+      <article class="card">
+        <span class="card-ico">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4c-2.6 0-4.6 2-4.6 4.6 0 1.3.4 2.3 1.2 3.1.6.6.9 1.2.9 2v.4h5v-.4c0-.8.3-1.4.9-2a4.4 4.4 0 0 0 1.2-3.1c0-2.6-2-4.6-4.6-4.6Z"/><path d="M9.6 17.2h4.8M10.4 19.8h3.2"/></svg>
+        </span>
+        <h3>中英双语 · 明暗主题</h3>
+        <p>界面中英文随时切换，亮色暗色跟随系统。域名盒自己也是用这套设置记住你的偏好。</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 界面 ============ -->
+<section class="section section-alt" id="shots">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="eyebrow">界面</span>
+      <h2>两个平台，一套体验</h2>
+      <p>安卓版和 Windows 版功能完全对齐，切换设备不用重新适应。</p>
+    </header>
+
+    <div class="tabs-wrap">
+      <div class="tabs" role="tablist">
+        <button class="tab is-active" data-tab="android" role="tab" type="button">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.6v7.2a1.2 1.2 0 0 0 1.2 1.2h9.6a1.2 1.2 0 0 0 1.2-1.2V9.6M6 9.6h12M6 9.6a6 6 0 0 1 12 0M9.6 6.3l-1-1.7M14.4 6.3l1-1.7"/><circle cx="9.6" cy="12.6" r=".7" fill="currentColor" stroke="none"/><circle cx="14.4" cy="12.6" r=".7" fill="currentColor" stroke="none"/></svg>
+          Android
+        </button>
+        <button class="tab" data-tab="windows" role="tab" type="button">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 4.2h6.4v6.4H4.2zM13.4 4.2h6.4v6.4h-6.4zM4.2 13.4h6.4v6.4H4.2zM13.4 13.4h6.4v6.4h-6.4z"/></svg>
+          Windows
+        </button>
+      </div>
+    </div>
+
+    <div class="shots" id="shotsAndroid">
+      <figure class="shot"><img src="assets/shots/android-domains.png" alt="域名列表" loading="lazy"><figcaption>域名列表</figcaption></figure>
+      <figure class="shot"><img src="assets/shots/android-records.png" alt="DNS 记录" loading="lazy"><figcaption>DNS 记录</figcaption></figure>
+      <figure class="shot"><img src="assets/shots/android-tools.png" alt="工具箱" loading="lazy"><figcaption>工具箱</figcaption></figure>
+      <figure class="shot"><img src="assets/shots/android-roots.png" alt="根域名选择" loading="lazy"><figcaption>根域名选择</figcaption></figure>
+      <figure class="shot"><img src="assets/shots/android-upgrade.png" alt="永久升级" loading="lazy"><figcaption>永久升级</figcaption></figure>
+      <figure class="shot"><img src="assets/shots/android-keys.png" alt="API 密钥" loading="lazy"><figcaption>API 密钥</figcaption></figure>
+    </div>
+
+    <div class="shots shots-wide is-hidden" id="shotsWindows">
+      <figure class="shot shot-wide"><img src="assets/shots/pc-app.png" alt="Windows 版主界面" loading="lazy"><figcaption>主界面</figcaption></figure>
+      <figure class="shot shot-wide"><img src="assets/shots/pc-installer.png" alt="Windows 安装向导" loading="lazy"><figcaption>安装向导</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 下载 ============ -->
+<section class="section" id="download">
+  <div class="wrap">
+    <header class="sec-head">
+      <span class="eyebrow">下载</span>
+      <h2>选择你的平台</h2>
+      <p>两个版本数据格式完全兼容，可以同时使用。</p>
+    </header>
+
+    <div class="grid grid-2 dl-grid">
+
+      <article class="dl-card">
+        <div class="dl-head">
+          <span class="dl-ico">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.6v7.2a1.2 1.2 0 0 0 1.2 1.2h9.6a1.2 1.2 0 0 0 1.2-1.2V9.6M6 9.6h12M6 9.6a6 6 0 0 1 12 0M9.6 6.3l-1-1.7M14.4 6.3l1-1.7"/><circle cx="9.6" cy="12.6" r=".7" fill="currentColor" stroke="none"/><circle cx="14.4" cy="12.6" r=".7" fill="currentColor" stroke="none"/></svg>
+          </span>
+          <div>
+            <h3>安卓版</h3>
+            <span class="dl-sub">Kotlin + Jetpack Compose 原生</span>
+          </div>
+          <span class="tag">v1.1.1</span>
+        </div>
+
+        <dl class="meta">
+          <div><dt>文件</dt><dd>ShizukuDomainBox-Android-v1.1.1.apk</dd></div>
+          <div><dt>大小</dt><dd>7.47 MB</dd></div>
+          <div><dt>系统</dt><dd>Android 8.0 及以上</dd></div>
+          <div><dt>签名</dt><dd>v2 + v3 已签名</dd></div>
+        </dl>
+
+        <details class="hashbox">
+          <summary>SHA-256 校验值</summary>
+          <code class="hash">DBE57E61EADA82B7B79BAE2C241ACCAF13FDDF1CBDF5595C97FAB3BC44D08D7D</code>
+        </details>
+
+        <a class="btn btn-primary btn-block" href="downloads/ShizukuDomainBox-Android-v1.1.1.apk" download>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4v11.2M7.6 10.4 12 14.8l4.4-4.4M4.6 19.6h14.8"/></svg>
+          下载 APK
+        </a>
+        <p class="hint">首次安装需要在系统设置里允许「安装未知来源应用」。</p>
+      </article>
+
+      <article class="dl-card">
+        <div class="dl-head">
+          <span class="dl-ico">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 4.2h6.4v6.4H4.2zM13.4 4.2h6.4v6.4h-6.4zM4.2 13.4h6.4v6.4H4.2zM13.4 13.4h6.4v6.4h-6.4z"/></svg>
+          </span>
+          <div>
+            <h3>Windows 版</h3>
+            <span class="dl-sub">Kotlin + Compose Desktop</span>
+          </div>
+          <span class="tag">v1.0.0</span>
+        </div>
+
+        <dl class="meta">
+          <div><dt>文件</dt><dd>ShizukuDomainBox-Setup-v1.0.0.exe</dd></div>
+          <div><dt>大小</dt><dd>96.1 MB（自带运行时）</dd></div>
+          <div><dt>系统</dt><dd>Windows 10 / 11 64 位</dd></div>
+          <div><dt>安装</dt><dd>向导式 · 可自定义路径</dd></div>
+        </dl>
+
+        <details class="hashbox">
+          <summary>SHA-256 校验值</summary>
+          <code class="hash">2F8BA201991CDB67008C36977C7F227114223064A0798FE122AB4E77FE265BF5</code>
+        </details>
+
+        <a class="btn btn-primary btn-block" href="downloads/ShizukuDomainBox-Setup-v1.0.0.exe" download>
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.4v11.2M7.6 10.4 12 14.8l4.4-4.4M4.6 19.6h14.8"/></svg>
+          下载安装程序
+        </a>
+        <p class="hint">程序自带 Java 运行时，电脑上不需要另外装 Java。</p>
+      </article>
+
+    </div>
+
+    <div class="notice">
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.6 2.8 20.4h18.4Z"/><path d="M12 9.8v4.4M12 17.2v.2"/></svg>
+      <div>
+        <b>第三方工具声明</b>
+        <p>本项目是 DNSHE 免费域名的第三方管理工具，与 DNSHE 官方没有隶属关系。
+           使用前请先在 <a href="https://my.dnshe.com/register.php?language=chinese" target="_blank" rel="noopener noreferrer">DNSHE 官网</a>
+           注册账号并获取 API 密钥。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 常见问题 ============ -->
+<section class="section section-alt" id="faq">
+  <div class="wrap wrap-narrow">
+    <header class="sec-head">
+      <span class="eyebrow">常见问题</span>
+      <h2>你可能想问的</h2>
+    </header>
+
+    <div class="faq">
+      <details>
+        <summary>API 密钥在哪里获取？<span class="chev"></span></summary>
+        <div class="faq-body"><p>登录 <a href="https://my.dnshe.com/" target="_blank" rel="noopener noreferrer">my.dnshe.com</a>，
+          在账号设置里创建 API Key 和 API Secret。App 里添加账号时把这两个值填进去，点「测试连接」确认无误后保存即可。</p></div>
+      </details>
+
+      <details>
+        <summary>密钥会不会被上传？<span class="chev"></span></summary>
+        <div class="faq-body"><p>不会。密钥只保存在你自己的设备上：安卓用系统 Keystore、Windows 用 DPAPI，
+          按当前用户加密存储。App 唯一的网络请求就是直接调用 DNSHE 官方 API，没有任何中间服务器，也没有遥测上报。</p></div>
+      </details>
+
+      <details>
+        <summary>手机和电脑的数据能同步吗？<span class="chev"></span></summary>
+        <div class="faq-body"><p>通过备份文件手动同步。两端导出的 JSON 格式逐字段一致，在安卓版导出后传到 Windows 版导入即可，
+          反过来也一样。备份可以选择明文（方便查看）或口令加密（PBKDF2-HMAC-SHA256 + AES-256-GCM）。</p></div>
+      </details>
+
+      <details>
+        <summary>什么是「外部根域名」？<span class="chev"></span></summary>
+        <div class="faq-body"><p>DNSHE 的根域名分两类。官方根域名由 DNSHE 直接运营；外部根域名由第三方提供，
+          可用性和续期政策可能随时变化。<b>本工具会把外部根域名用醒目的标签标出来并在选择时给出确认提示</b>，
+          避免你误选之后域名突然失效。</p></div>
+      </details>
+
+      <details>
+        <summary>Windows 版为什么这么大？<span class="chev"></span></summary>
+        <div class="faq-body"><p>因为程序自带了裁剪过的 Java 运行时（约 66 MB），装完就能直接用，
+          电脑上不需要预先安装 Java。安装程序还内置了卸载程序，可以在系统「设置 → 应用」里正常卸载。</p></div>
+      </details>
+
+      <details>
+        <summary>安装时选了「所有用户」会怎样？<span class="chev"></span></summary>
+        <div class="faq-body"><p>会装到 <code>Program Files</code> 并弹出 UAC 提权确认，装好后这台电脑上的所有用户都能用。
+          选「仅为我安装」则装到你的用户目录，不需要管理员权限。卸载时可以选择保留账号数据或彻底删除。</p></div>
+      </details>
+
+      <details>
+        <summary>支持哪些 DNS 记录类型？<span class="chev"></span></summary>
+        <div class="faq-body"><p>A、AAAA、CNAME、MX、TXT、NS、SRV、CAA，覆盖 DNSHE API 支持的全部类型，
+          可以新增、修改、删除，也可以给记录加备注。</p></div>
+      </details>
+
+      <details>
+        <summary>是开源项目吗？<span class="chev"></span></summary>
+        <div class="faq-body"><p>目前作为个人项目发布，暂未开源。如果你在使用中遇到问题或者有功能建议，
+          欢迎通过下方邮箱反馈。</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 结尾 CTA ============ -->
+<section class="section cta-section">
+  <div class="wrap cta-inner">
+    <img class="cta-logo" src="assets/logo-128.png" alt="">
+    <h2>把 DNSHE 账号收进一个盒子</h2>
+    <p>安卓和 Windows，两个平台都是免费的。</p>
+    <div class="cta-btns">
+      <a class="btn btn-primary btn-lg" href="downloads/ShizukuDomainBox-Android-v1.1.1.apk" download>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9.6v7.2a1.2 1.2 0 0 0 1.2 1.2h9.6a1.2 1.2 0 0 0 1.2-1.2V9.6M6 9.6h12M6 9.6a6 6 0 0 1 12 0M9.6 6.3l-1-1.7M14.4 6.3l1-1.7"/></svg>
+        安卓版 APK
+      </a>
+      <a class="btn btn-ghost btn-lg" href="downloads/ShizukuDomainBox-Setup-v1.0.0.exe" download>
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4.2 4.2h6.4v6.4H4.2zM13.4 4.2h6.4v6.4h-6.4zM4.2 13.4h6.4v6.4H4.2zM13.4 13.4h6.4v6.4h-6.4z"/></svg>
+        Windows 安装程序
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ 页脚 ============ -->
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div class="foot-brand">
+      <img src="assets/logo-64.png" alt="">
+      <div>
+        <strong>雫的域名盒</strong>
+        <span>ShizukuDomainBox</span>
+      </div>
+    </div>
+
+    <nav class="foot-links">
+      <a href="https://my.dnshe.com/register.php?language=chinese" target="_blank" rel="noopener noreferrer">DNSHE 官网</a>
+      <a href="https://my.dnshe.com/knowledgebase/13/DNSHE-Free-Domain-API-User-Guide-V2.0.html" target="_blank" rel="noopener noreferrer">API 文档</a>
+      <a href="#download">下载</a>
+      <a href="#faq">常见问题</a>
+    </nav>
+
+    <p class="foot-note">
+      第三方工具，与 DNSHE 官方无隶属关系 · 所有账号数据仅保存在你的设备上
+      <br>
+      &copy; 2026 Nekoshizuku. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+<script src="assets/app.js?v=1"></script>
+</body>
+</html>

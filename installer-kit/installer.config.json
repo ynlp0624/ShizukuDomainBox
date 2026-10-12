@@ -1,0 +1,65 @@
+{
+  "productName": "Windows11轻松设置",
+  "appId": "KitDemoBox",
+  "version": "1.1.2",
+  "publisher": "Shizuku Studio",
+  "copyright": "(c) 2026 Shizuku Studio",
+  "iconFile": "samples/demo-app/icons/app.ico",
+  "logoFile": "samples/demo-app/src/main/resources/app-logo.png",
+  "windowIconSizes": [
+    16,
+    20,
+    24,
+    32,
+    40,
+    48,
+    64,
+    96,
+    128,
+    256
+  ],
+  "windowIconDir": "samples/demo-app/src/main/resources",
+  "brandColor": "#7C4DFF",
+  "i18n": {
+    "zh": {
+      "welcome.intro": "这个向导会把「{productName}」装到这台电脑上，全程不需要联网喵~"
+    },
+    "en": {
+      "welcome.intro": "This wizard installs {productName} on this computer. No network needed."
+    }
+  },
+  "licenseFile": "assets/LICENSE-demo.txt",
+  "licenseText": "",
+  "urlInfoAbout": "https://example.com/",
+  "helpLink": "https://example.com/help",
+  "installMode": "portable",
+  "portableWizard": "lite",
+  "buildRoot": ".",
+  "buildTask": ":samples:demo-app:createDistributable",
+  "mainAppDir": "C:\\Users\\mynlp\\Downloads\\Windows11轻松设置1.12正式版\\Windows11轻松设置1.12正式版",
+  "mainExeName": "Windows11轻松设置.exe",
+  "installDirName": "KitDemoBox",
+  "dataDirName": "KitDemoBox",
+  "estimatedSizeMb": 160,
+  "codeSign": {
+    "enabled": true,
+    "toolsDir": "D:/sing/codesign",
+    "profile": "studio",
+    "timestamp": false,
+    "signInstaller": true,
+    "signStageFiles": true,
+    "includeGlobs": [
+      "*.exe"
+    ],
+    "verify": true
+  },
+  "defaultPerUser": true,
+  "allowScopeChoice": true,
+  "defaultDesktopShortcut": true,
+  "defaultStartMenu": true,
+  "launchAfterInstall": true,
+  "uninstallKeepDataByDefault": true,
+  "killRunningAppOnUninstall": true,
+  "wizardMainClass": "io.nekoshizuku.kit.app.MainKt",
+  "wizardClasspath": []
+}

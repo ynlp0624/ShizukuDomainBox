@@ -1,0 +1,57 @@
+{
+  "_说明": "InstallerKit 的产品配置示例。复制成 installer.config.json 后按需修改；打包期由 tools/build-installer.ps1 读取并在打包期注入进 app-image。",
+  "_路径说明": "相对路径以本文件所在目录为基准。",
+  "_换产品": "改 productName / appId / version / 图标 / mainAppDir 这几个就够，代码一个字都不用动。",
+
+  "productName": "雫的域名盒",
+  "appId": "ShizukuDomainBox",
+  "version": "1.0.0",
+  "publisher": "Nekoshizuku",
+  "copyright": "(c) 2026 Nekoshizuku",
+
+  "iconFile": "icons/app.ico",
+  "logoFile": "resources/app-logo.png",
+  "windowIconSizes": [16, 20, 24, 32, 40, 48, 64, 96, 128, 256],
+  "windowIconDir": "resources",
+  "brandColor": "#3E6FD9",
+
+  "licenseFile": "assets/LICENSE.txt",
+  "urlInfoAbout": "https://example.com/",
+  "helpLink": "https://example.com/help",
+
+  "buildRoot": ".",
+  "buildTask": ":desktop:createDistributable",
+  "mainAppDir": "../myapp/build/compose/binaries/main/app/MyApp",
+  "mainExeName": "MyApp.exe",
+  "installDirName": "MyApp",
+  "dataDirName": "MyApp",
+  "estimatedSizeMb": 160,
+
+  "defaultPerUser": true,
+  "allowScopeChoice": true,
+  "defaultDesktopShortcut": true,
+  "defaultStartMenu": true,
+  "launchAfterInstall": true,
+
+  "uninstallKeepDataByDefault": true,
+  "killRunningAppOnUninstall": true,
+
+  "_i18n": "界面文案覆盖。只写想改的 key，其余用内置文案（key 见 kit-ui 的 Strings.kt）。",
+  "i18n": {
+    "zh": {
+      "welcome.title": "欢迎使用 {productName} 安装向导",
+      "finish.title": "安装完成",
+      "uninstall.keepDataDesc": "只删程序，账号/设置/日志保留在 {dataDir}，重装后还在"
+    },
+    "en": {
+      "welcome.title": "Welcome to the {productName} Setup Wizard",
+      "finish.title": "Setup complete",
+      "uninstall.keepDataDesc": "Remove the program only; data stays in {dataDir}"
+    }
+  },
+
+  "_注入字段": "下面这些不用手写，打包脚本会自动填进 app-image 里的 installer.config.json。",
+  "licenseText": "（打包期由 licenseFile 自动读进来）",
+  "wizardMainClass": "io.nekoshizuku.kit.app.MainKt",
+  "wizardClasspath": []
+}

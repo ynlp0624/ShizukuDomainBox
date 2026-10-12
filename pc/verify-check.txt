@@ -1,0 +1,38 @@
+> Task :desktop:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :desktop:convertXmlValueResourcesForMain NO-SOURCE
+> Task :desktop:copyNonXmlValueResourcesForMain NO-SOURCE
+> Task :desktop:prepareComposeResourcesTaskForMain NO-SOURCE
+> Task :desktop:generateResourceAccessorsForMain SKIPPED
+> Task :desktop:generateActualResourceCollectorsForMain SKIPPED
+> Task :desktop:generateComposeResClass SKIPPED
+> Task :desktop:assembleMainResources UP-TO-DATE
+> Task :desktop:processResources UP-TO-DATE
+> Task :core:compileKotlin UP-TO-DATE
+> Task :core:compileJava NO-SOURCE
+> Task :core:processResources NO-SOURCE
+> Task :core:classes UP-TO-DATE
+> Task :core:jar UP-TO-DATE
+> Task :desktop:compileKotlin UP-TO-DATE
+> Task :desktop:compileJava NO-SOURCE
+> Task :desktop:classes UP-TO-DATE
+
+> Task :desktop:verifyCore
+数据目录: C:\Users\mynlp\AppData\Roaming\ShizukuDomainBox
+DPAPI 可用: true
+当前账号: PC主号 (cfsd_0adc0…77a5) 密钥长度=64
+配额: 可用 1 / 共 3（已用 2）
+域名列表: 2 个
+  - shizuku.kz.ci  状态=Registered  id=8320997186  [外部]
+  - mynmail.bbroot.com  状态=Registered  id=7477265796  [官方]
+DNS 记录 (shizuku.kz.ci): 0 条
+请求日志条数: 6
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.7/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD SUCCESSFUL in 7s
+6 actionable tasks: 1 executed, 5 up-to-date

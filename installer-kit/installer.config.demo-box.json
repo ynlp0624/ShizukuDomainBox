@@ -1,0 +1,32 @@
+{
+  "productName": "雫的演示盒",
+  "appId": "KitDemoBox",
+  "publisher": "Shizuku Studio",
+  "copyright": "(c) 2026 Shizuku Studio",
+  "iconFile": "samples/demo-app/icons/app.ico",
+  "logoFile": "samples/demo-app/src/main/resources/app-logo.png",
+  "windowIconDir": "samples/demo-app/src/main/resources",
+  "brandColor": "#7C4DFF",
+  "i18n": {
+    "zh": {
+      "welcome.intro": "这个向导会把「{productName}」装到这台电脑上，全程不需要联网喵~"
+    },
+    "en": {
+      "welcome.intro": "This wizard installs {productName} on this computer. No network needed."
+    }
+  },
+  "licenseFile": "assets/LICENSE-demo.txt",
+  "urlInfoAbout": "https://example.com/",
+  "helpLink": "https://example.com/help",
+  "buildRoot": ".",
+  "buildTask": ":samples:demo-app:createDistributable",
+  "mainAppDir": "samples/demo-app/build/compose/binaries/main/app/KitDemoBox",
+  "mainExeName": "KitDemoBox.exe",
+  "installDirName": "KitDemoBox",
+  "dataDirName": "KitDemoBox",
+  "codeSign": {
+    "enabled": true,
+    "toolsDir": "D:/sing/codesign",
+    "profile": "studio"
+  }
+}
