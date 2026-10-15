@@ -14,10 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,20 +26,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.core.AppCore
 import io.nekoshizuku.dnshe.core.AppLinks
 import io.nekoshizuku.dnshe.core.AppPaths
 import io.nekoshizuku.dnshe.core.AppSettings
 import io.nekoshizuku.dnshe.core.Lang
 import io.nekoshizuku.dnshe.core.ThemeMode
+import io.nekoshizuku.dnshe.core.WinPaths
 import io.nekoshizuku.dnshe.desktop.Sys
 import io.nekoshizuku.dnshe.desktop.i18n.Str
 import io.nekoshizuku.dnshe.desktop.i18n.t
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
-private const val APP_VERSION = "1.0.0"
+/**
+ * 版本号只从 [WinPaths.VERSION] 取，**不要再在这里写死**。
+ * 之前这里是个 `const val APP_VERSION = "1.0.0"`，发版时忘了改，
+ * 结果「关于」页一直显示旧版本（侧栏却是新的）。
+ */
+private val APP_VERSION: String get() = WinPaths.VERSION
 
 @Composable
 fun SettingsView(
@@ -327,25 +333,25 @@ fun LogsView(onBack: () -> Unit, onToast: (String) -> Unit) {
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     e.method,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = if (e.ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                    fontSize = 14.sp,
+                                    color = if (e.ok) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.error,
                                     modifier = Modifier.width(58.dp),
                                 )
                                 Text(
                                     "${e.endpoint}${e.action?.let { "/$it" } ?: ""}",
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
+                                    fontSize = 14.sp, fontFamily = FontFamily.Monospace,
                                     modifier = Modifier.weight(1f),
                                 )
                                 Text(
                                     "${e.httpStatus}",
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = if (e.ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                    fontSize = 14.sp,
+                                    color = if (e.ok) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.error,
                                     modifier = Modifier.width(50.dp),
                                 )
                                 Text(
                                     "${fmt.format(Date(e.time))} · ${e.ms} ms" + (e.errorCode?.let { " · $it" } ?: ""),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 12.sp,
+                                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                     modifier = Modifier.width(260.dp),
                                 )
                             }
@@ -370,12 +376,12 @@ fun AboutView(onBack: () -> Unit) {
             Spacer(Modifier.height(6.dp))
             AppLogo(72.dp)
             Spacer(Modifier.height(10.dp))
-            Text(t(Str.AppName) + "  PC", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
-            Text("v$APP_VERSION · Windows", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(t(Str.AppName) + "  PC", fontSize = 22.sp, color = MiuixTheme.colorScheme.primary)
+            Text("v$APP_VERSION · Windows", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
             Spacer(Modifier.height(18.dp))
             AppCard(modifier = Modifier.width(680.dp)) {
                 Column {
-                    Text(t(Str.AboutDesc), style = MaterialTheme.typography.bodyMedium)
+                    Text(t(Str.AboutDesc), fontSize = 14.sp)
                     Spacer(Modifier.height(10.dp))
                     InfoRow(t(Str.Version), APP_VERSION)
                     InfoRow(t(Str.PackageName), "io.nekoshizuku.dnshe.desktop", mono = true)
@@ -384,18 +390,18 @@ fun AboutView(onBack: () -> Unit) {
                     Spacer(Modifier.height(6.dp))
                     Text(
                         t(Str.JsonInteropNote),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
             }
             Spacer(Modifier.height(12.dp))
             AppCard(modifier = Modifier.width(680.dp)) {
                 Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    OutlinedButton(onClick = { Sys.openUrl(AppLinks.SITE) }) { Text(t(Str.OpenOfficialSite)) }
-                    OutlinedButton(onClick = { Sys.openUrl(AppLinks.REGISTER) }) { Text(t(Str.OpenRegisterPage)) }
-                    OutlinedButton(onClick = { Sys.openUrl(AppLinks.DOC) }) { Text("API 文档") }
-                    OutlinedButton(onClick = { Sys.openFolder(AppPaths.dataDir) }) { Text(t(Str.OpenDataFolder)) }
+                    TextButton(text = t(Str.OpenOfficialSite), onClick = { Sys.openUrl(AppLinks.SITE) })
+                    TextButton(text = t(Str.OpenRegisterPage), onClick = { Sys.openUrl(AppLinks.REGISTER) })
+                    TextButton(text = "API 文档", onClick = { Sys.openUrl(AppLinks.DOC) })
+                    TextButton(text = t(Str.OpenDataFolder), onClick = { Sys.openFolder(AppPaths.dataDir) })
                 }
             }
             Spacer(Modifier.height(30.dp))

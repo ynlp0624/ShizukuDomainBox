@@ -22,13 +22,11 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -42,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.core.Account
 import io.nekoshizuku.dnshe.core.AppCore
 import io.nekoshizuku.dnshe.core.AppLinks
@@ -59,6 +58,7 @@ import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
 fun AccountsView(
@@ -197,35 +197,32 @@ fun AccountsView(
                 Column {
                     Text(
                         t(Str.KeystoreNote) + "\n" + t(Str.JsonInteropNote),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                     Spacer(Modifier.height(10.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        OutlinedButton(onClick = { doExport(accounts, onToast) }) { Text(t(Str.ExportBackup)) }
-                        OutlinedButton(onClick = {
-                            val f = Sys.pickOpenFile(t(Str.ImportBackup)) ?: return@OutlinedButton
-                            val text = runCatching { f.readText() }.getOrNull() ?: return@OutlinedButton
+                        TextButton(text = t(Str.ExportBackup), onClick = { doExport(accounts, onToast) })
+                        TextButton(text = t(Str.ImportBackup), onClick = {
+                            val f = Sys.pickOpenFile(t(Str.ImportBackup)) ?: return@TextButton
+                            val text = runCatching { f.readText() }.getOrNull() ?: return@TextButton
                             if (AppCore.accounts.looksEncrypted(text)) {
                                 host.show {
                                     PasswordDialog(
-                                        title = t(Str.ImportNeedPasswordShort),
-                                        hint = t(Str.ImportNeedPassword),
-                                        onConfirm = { pwd ->
+                                        title = t(Str.ImportNeedPasswordShort), hint = t(Str.ImportNeedPassword), onConfirm = { pwd ->
                                             val r = AppCore.accounts.importJson(text, pwd)
                                             onToast(r.message?.let { t(Str.ImportFailed, it) } ?: t(Str.ImportDone, r.added, r.updated, r.failed))
                                             host.dismiss()
-                                        },
-                                        onDismiss = { host.dismiss() },
+                                        }, onDismiss = { host.dismiss() },
                                     )
                                 }
                             } else {
                                 val r = AppCore.accounts.importJson(text, null)
                                 onToast(r.message?.let { t(Str.ImportFailed, it) } ?: t(Str.ImportDone, r.added, r.updated, r.failed))
                             }
-                        }) { Text(t(Str.ImportBackup)) }
-                        OutlinedButton(onClick = { Sys.openUrl(AppLinks.REGISTER) }) { Text(t(Str.OpenRegisterPage)) }
-                        OutlinedButton(onClick = { Sys.openUrl(AppLinks.SITE) }) { Text(t(Str.OpenOfficialSite)) }
+                        })
+                        TextButton(text = t(Str.OpenRegisterPage), onClick = { Sys.openUrl(AppLinks.REGISTER) })
+                        TextButton(text = t(Str.OpenOfficialSite), onClick = { Sys.openUrl(AppLinks.SITE) })
                     }
                 }
             }
@@ -281,14 +278,14 @@ private fun AccountRow(
                     .size(38.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(
-                        if (isCurrent) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHighest
+                        if (isCurrent) MiuixTheme.colorScheme.primaryContainer else MiuixTheme.colorScheme.surfaceContainerHighest
                     ),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = account.name.ifBlank { "?" }.take(1).uppercase(),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = if (isCurrent) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 16.sp,
+                    color = if (isCurrent) MiuixTheme.colorScheme.onPrimaryContainer else MiuixTheme.colorScheme.onSurfaceVariantSummary,
                 )
             }
             Spacer(Modifier.width(14.dp))
@@ -296,7 +293,7 @@ private fun AccountRow(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         account.name.ifBlank { account.apiKey.take(12) },
-                        style = MaterialTheme.typography.titleMedium,
+                        fontSize = 16.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -305,28 +302,28 @@ private fun AccountRow(
                         Icon(
                             Icons.Filled.Star,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MiuixTheme.colorScheme.primary,
                             modifier = Modifier.size(16.dp),
                         )
                         Spacer(Modifier.width(4.dp))
                         Text(
                             t(Str.CurrentAccount),
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 11.sp,
+                            color = MiuixTheme.colorScheme.primary,
                         )
                     }
                 }
                 Spacer(Modifier.height(3.dp))
                 Text(
                     account.maskedKey,
-                    style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 12.sp, fontFamily = FontFamily.Monospace,
+                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                 )
                 if (account.defaultRootDomain.isNotBlank()) {
                     Text(
                         "@" + account.defaultRootDomain,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.secondary,
                     )
                 }
                 if (broken) {
@@ -335,20 +332,20 @@ private fun AccountRow(
                         Icon(
                             Icons.Filled.Warning,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
+                            tint = MiuixTheme.colorScheme.error,
                             modifier = Modifier.size(13.dp),
                         )
                         Spacer(Modifier.width(5.dp))
                         Text(
                             t(Str.AccountKeyBroken),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.error,
                         )
                     }
                 }
             }
             if (!isCurrent) {
-                TextButton(onClick = onSelect) { Text(t(Str.SwitchTo)) }
+                TextButton(text = t(Str.SwitchTo), onClick = onSelect)
             }
             IconButton(onClick = onEdit) {
                 Icon(Icons.Filled.Edit, contentDescription = t(Str.Edit), modifier = Modifier.size(17.dp))
@@ -357,7 +354,7 @@ private fun AccountRow(
                 Icon(
                     Icons.Filled.Delete,
                     contentDescription = t(Str.Delete),
-                    tint = MaterialTheme.colorScheme.error,
+                    tint = MiuixTheme.colorScheme.error,
                     modifier = Modifier.size(17.dp),
                 )
             }
@@ -401,13 +398,10 @@ private fun AccountEditorDialog(
             isSecret = true, revealSecret = reveal,
         )
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            OutlinedButton(onClick = { reveal = !reveal }, modifier = Modifier.weight(1f)) {
-                Text(if (reveal) t(Str.HideSecret) else t(Str.ShowSecret))
-            }
-            OutlinedButton(
-                onClick = {
+            TextButton(text = if (reveal) t(Str.HideSecret) else t(Str.ShowSecret), onClick = { reveal = !reveal }, modifier = Modifier.weight(1f))
+            TextButton(text = if (testing) t(Str.Loading) else t(Str.TestConnection), onClick = {
                     if (key.isBlank() || secret.isBlank()) {
-                        message = t(Str.ApiKeyRequired); messageIsError = true; return@OutlinedButton
+                        message = t(Str.ApiKeyRequired); messageIsError = true; return@TextButton
                     }
                     testing = true
                     message = null
@@ -424,10 +418,7 @@ private fun AccountEditorDialog(
                             messageIsError = true
                         }
                     }
-                },
-                enabled = !testing,
-                modifier = Modifier.weight(1f),
-            ) { Text(if (testing) t(Str.Loading) else t(Str.TestConnection)) }
+                }, enabled = !testing, modifier = Modifier.weight(1f),)
         }
         AppTextField(root, { root = it }, t(Str.DefaultRootDomain), hint = t(Str.Optional))
         AppTextField(memo, { memo = it }, t(Str.Memo), hint = t(Str.Optional), singleLine = false, maxLines = 3)

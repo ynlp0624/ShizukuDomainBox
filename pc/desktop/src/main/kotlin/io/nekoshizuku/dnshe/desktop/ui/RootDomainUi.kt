@@ -20,10 +20,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.Surface
+import top.yukonga.miuix.kmp.basic.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,24 +35,25 @@ import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.core.RootDomains
 import io.nekoshizuku.dnshe.desktop.i18n.Str
 import io.nekoshizuku.dnshe.desktop.i18n.t
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 @Composable
 fun RootDomainBadge(root: String, modifier: Modifier = Modifier) {
     if (root.isBlank()) return
     val (bg, fg, label) = when {
         RootDomains.isExternal(root) -> Triple(
-            MaterialTheme.colorScheme.errorContainer,
-            MaterialTheme.colorScheme.onErrorContainer,
+            MiuixTheme.colorScheme.errorContainer,
+            MiuixTheme.colorScheme.error,
             t(Str.RootDomainExternalTag),
         )
         RootDomains.isKnown(root) -> Triple(
-            MaterialTheme.colorScheme.primaryContainer,
-            MaterialTheme.colorScheme.onPrimaryContainer,
+            MiuixTheme.colorScheme.primaryContainer,
+            MiuixTheme.colorScheme.onPrimaryContainer,
             t(Str.RootDomainOfficialTag),
         )
         else -> Triple(
-            MaterialTheme.colorScheme.surfaceContainerHighest,
-            MaterialTheme.colorScheme.onSurfaceVariant,
+            MiuixTheme.colorScheme.surfaceContainerHighest,
+            MiuixTheme.colorScheme.onSurfaceVariantSummary,
             t(Str.UnknownRootTag),
         )
     }
@@ -63,7 +63,7 @@ fun RootDomainBadge(root: String, modifier: Modifier = Modifier) {
             .background(bg)
             .padding(horizontal = 8.dp, vertical = 2.dp),
     ) {
-        Text(text = label, style = MaterialTheme.typography.labelSmall, color = fg, fontSize = 10.sp)
+        Text(text = label, color = fg, fontSize = 10.sp)
     }
 }
 
@@ -74,8 +74,8 @@ fun RootDomainNotice(root: String, modifier: Modifier = Modifier) {
     val unknown = !RootDomains.isKnown(root)
     if (!external && !unknown) return
 
-    val bg = if (external) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.tertiaryContainer
-    val fg = if (external) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onTertiaryContainer
+    val bg = if (external) MiuixTheme.colorScheme.errorContainer else MiuixTheme.colorScheme.tertiaryContainer
+    val fg = if (external) MiuixTheme.colorScheme.error else MiuixTheme.colorScheme.onTertiaryContainer
 
     Surface(modifier = modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), color = bg) {
         Row(modifier = Modifier.padding(14.dp)) {
@@ -89,13 +89,13 @@ fun RootDomainNotice(root: String, modifier: Modifier = Modifier) {
             Column {
                 Text(
                     text = if (external) t(Str.ExternalWarnTitle) else t(Str.UnknownRootWarnTitle),
-                    style = MaterialTheme.typography.titleSmall,
+                    fontSize = 14.sp,
                     color = fg,
                 )
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = if (external) t(Str.ExternalWarnBody, root) else t(Str.UnknownRootWarnBody, root),
-                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 12.sp,
                     color = fg,
                 )
             }
@@ -108,13 +108,12 @@ fun ExternalMiniTag(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(50))
-            .background(MaterialTheme.colorScheme.errorContainer)
+            .background(MiuixTheme.colorScheme.errorContainer)
             .padding(horizontal = 6.dp, vertical = 1.dp),
     ) {
         Text(
             text = t(Str.RootDomainExternalTag),
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onErrorContainer,
+            color = MiuixTheme.colorScheme.error,
             fontSize = 9.sp,
         )
     }
@@ -129,20 +128,20 @@ fun RootDomainPickerDialog(
     OverlayDialog(title = t(Str.RootDomainListTitle), onDismiss = onDismiss, width = 520.dp, maxHeight = 620.dp) {
         Text(
             text = t(Str.RootDomainNote),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontSize = 12.sp,
+            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
         )
-        GroupHeader(t(Str.RootDomainGroupOfficial), MaterialTheme.colorScheme.onSurfaceVariant)
+        GroupHeader(t(Str.RootDomainGroupOfficial), MiuixTheme.colorScheme.onSurfaceVariantSummary)
         RootDomains.OFFICIAL.forEach { opt ->
             RootOptionRow(opt.domain, opt.domain.equals(current.trim(), true), false) { onSelect(opt.domain) }
         }
         Spacer(Modifier.height(10.dp))
-        GroupHeader(t(Str.RootDomainGroupExternal), MaterialTheme.colorScheme.error)
+        GroupHeader(t(Str.RootDomainGroupExternal), MiuixTheme.colorScheme.error)
         RootDomains.EXTERNAL.forEach { opt ->
             RootOptionRow(opt.domain, opt.domain.equals(current.trim(), true), true) { onSelect(opt.domain) }
         }
         Spacer(Modifier.height(4.dp))
-        Text(t(Str.ExternalWarnShort), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+        Text(t(Str.ExternalWarnShort), fontSize = 12.sp, color = MiuixTheme.colorScheme.error)
     }
 }
 
@@ -150,7 +149,7 @@ fun RootDomainPickerDialog(
 private fun GroupHeader(text: String, color: Color) {
     Text(
         text = text,
-        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+        fontSize = 14.sp, fontWeight = FontWeight.SemiBold,
         color = color,
         modifier = Modifier.padding(top = 6.dp),
     )
@@ -163,7 +162,7 @@ private fun RootOptionRow(domain: String, selected: Boolean, highlight: Boolean,
             .fillMaxWidth()
             .heightIn(min = 40.dp)
             .clip(RoundedCornerShape(10.dp))
-            .background(if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
+            .background(if (selected) MiuixTheme.colorScheme.primaryContainer else Color.Transparent)
             .clickable { onClick() }
             .padding(horizontal = 12.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -171,11 +170,11 @@ private fun RootOptionRow(domain: String, selected: Boolean, highlight: Boolean,
     ) {
         Text(
             text = domain,
-            style = MaterialTheme.typography.bodyLarge.copy(fontFamily = FontFamily.Monospace),
+            fontSize = 16.sp, fontFamily = FontFamily.Monospace,
             color = when {
-                selected -> MaterialTheme.colorScheme.onPrimaryContainer
-                highlight -> MaterialTheme.colorScheme.error
-                else -> MaterialTheme.colorScheme.onSurface
+                selected -> MiuixTheme.colorScheme.onPrimaryContainer
+                highlight -> MiuixTheme.colorScheme.error
+                else -> MiuixTheme.colorScheme.onSurface
             },
             modifier = Modifier.weight(1f),
         )
@@ -183,13 +182,12 @@ private fun RootOptionRow(domain: String, selected: Boolean, highlight: Boolean,
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
-                    .background(MaterialTheme.colorScheme.errorContainer)
+                    .background(MiuixTheme.colorScheme.errorContainer)
                     .padding(horizontal = 7.dp, vertical = 2.dp),
             ) {
                 Text(
                     t(Str.RootDomainExternalTag),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onErrorContainer,
+                    color = MiuixTheme.colorScheme.error,
                     fontSize = 10.sp,
                 )
             }
@@ -198,7 +196,7 @@ private fun RootOptionRow(domain: String, selected: Boolean, highlight: Boolean,
             Icon(
                 Icons.Filled.Check,
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MiuixTheme.colorScheme.primary,
                 modifier = Modifier.size(16.dp),
             )
         }

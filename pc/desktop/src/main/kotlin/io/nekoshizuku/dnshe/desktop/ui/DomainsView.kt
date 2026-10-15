@@ -27,16 +27,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
+import top.yukonga.miuix.kmp.basic.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import top.yukonga.miuix.kmp.basic.Surface
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +50,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.core.Account
 import io.nekoshizuku.dnshe.core.AppCore
 import io.nekoshizuku.dnshe.core.AppSettings
@@ -65,6 +65,7 @@ import io.nekoshizuku.dnshe.desktop.i18n.Str
 import io.nekoshizuku.dnshe.desktop.i18n.t
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /* ============================ 页面外壳 ============================== */
 
@@ -75,7 +76,7 @@ fun PageHeader(
     onBack: (() -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
-    Surface(color = MaterialTheme.colorScheme.surfaceContainerLowest, shadowElevation = 1.dp) {
+    Surface(color = MiuixTheme.colorScheme.surfaceContainer, shadowElevation = 1.dp) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(horizontal = 22.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -87,9 +88,9 @@ fun PageHeader(
                 Spacer(Modifier.width(10.dp))
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(title, style = MaterialTheme.typography.titleLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(title, fontSize = 22.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 if (subtitle != null) {
-                    Text(subtitle, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text(subtitle, fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
                 }
             }
             Row(
@@ -225,8 +226,8 @@ fun DomainsView(
                 item {
                     Text(
                         t(Str.StatTotal, items.size),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
                 items(items, key = { it.id }) { d ->
@@ -235,14 +236,12 @@ fun DomainsView(
                 item {
                     Box(modifier = Modifier.fillMaxWidth().padding(12.dp), contentAlignment = Alignment.Center) {
                         if (hasMore) {
-                            OutlinedButton(onClick = { scope.launch { load(false) } }, enabled = !loadingMore) {
-                                Text(if (loadingMore) t(Str.Loading) else t(Str.LoadMore))
-                            }
+                            TextButton(text = if (loadingMore) t(Str.Loading) else t(Str.LoadMore), onClick = { scope.launch { load(false) } }, enabled = !loadingMore)
                         } else {
                             Text(
                                 t(Str.NoMoreData),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 12.sp,
+                                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                             )
                         }
                     }
@@ -257,14 +256,14 @@ fun StatTile(label: String, value: String, modifier: Modifier = Modifier, accent
     androidx.compose.material3.Surface(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer,
+        color = MiuixTheme.colorScheme.surfaceContainer,
     ) {
         Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 9.dp)) {
-            Text(label, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(label, fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
             Text(
                 value,
-                style = MaterialTheme.typography.titleMedium,
-                color = accent ?: MaterialTheme.colorScheme.primary,
+                fontSize = 16.sp,
+                color = accent ?: MiuixTheme.colorScheme.primary,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -280,7 +279,7 @@ private fun DomainRow(domain: Subdomain, onClick: () -> Unit) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = domain.displayDomain,
-                        style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
+                        fontSize = 16.sp, fontFamily = FontFamily.Monospace,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -293,13 +292,13 @@ private fun DomainRow(domain: Subdomain, onClick: () -> Unit) {
                 Row(horizontalArrangement = Arrangement.spacedBy(22.dp)) {
                     Text(
                         "${t(Str.ExpiresAt)}: " + if (domain.neverExpiresBool) t(Str.NeverExpires) else (domain.expiresAt ?: "-"),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                     Text(
                         "${t(Str.CreatedAt)}: ${domain.createdAt ?: "-"}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
             }
@@ -364,8 +363,8 @@ fun RegisterView(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             t(Str.RootDomain),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                             modifier = Modifier.weight(1f),
                         )
                         RootDomainBadge(root)
@@ -373,11 +372,11 @@ fun RegisterView(
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = root.ifBlank { t(Str.ChooseRootDomain) },
-                        style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
+                        fontSize = 16.sp, fontFamily = FontFamily.Monospace,
                         color = when {
-                            root.isBlank() -> MaterialTheme.colorScheme.onSurfaceVariant
-                            RootDomains.isExternal(root) -> MaterialTheme.colorScheme.error
-                            else -> MaterialTheme.colorScheme.onSurface
+                            root.isBlank() -> MiuixTheme.colorScheme.onSurfaceVariantSummary
+                            RootDomains.isExternal(root) -> MiuixTheme.colorScheme.error
+                            else -> MiuixTheme.colorScheme.onSurface
                         },
                     )
                 }
@@ -386,19 +385,15 @@ fun RegisterView(
             Box(modifier = Modifier.width(520.dp)) { RootDomainNotice(root) }
 
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                OutlinedButton(onClick = {
+                TextButton(text = t(Str.RootDomainManualInput), onClick = {
                     host.show {
                         ManualRootDialog(
-                            initial = root,
-                            onConfirm = { root = it.lowercase(); host.dismiss() },
-                            onDismiss = { host.dismiss() },
+                            initial = root, onConfirm = { root = it.lowercase(); host.dismiss() }, onDismiss = { host.dismiss() },
                         )
                     }
-                }) { Text(t(Str.RootDomainManualInput)) }
+                })
                 if (account?.defaultRootDomain?.isNotBlank() == true) {
-                    OutlinedButton(onClick = { root = account.defaultRootDomain }) {
-                        Text(t(Str.UseDefaultRoot, account.defaultRootDomain))
-                    }
+                    TextButton(text = t(Str.UseDefaultRoot, account.defaultRootDomain), onClick = { root = account.defaultRootDomain })
                 }
             }
 
@@ -407,14 +402,14 @@ fun RegisterView(
                     Column {
                         Text(
                             t(Str.FullDomainPreview),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
                             "$sub.$root",
-                            style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
-                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 16.sp, fontFamily = FontFamily.Monospace,
+                            color = MiuixTheme.colorScheme.primary,
                         )
                     }
                 }
@@ -567,7 +562,7 @@ fun DomainDetailView(
                         },
                     )
                     DropdownMenuItem(
-                        text = { Text(t(Str.DeleteDomain), color = MaterialTheme.colorScheme.error) },
+                        text = { Text(t(Str.DeleteDomain), color = MiuixTheme.colorScheme.error) },
                         onClick = {
                             menuOpen = false
                             host.show {
@@ -610,7 +605,7 @@ fun DomainDetailView(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     d.displayDomain,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
+                                    fontSize = 16.sp, fontFamily = FontFamily.Monospace,
                                     modifier = Modifier.weight(1f),
                                 )
                                 if (RootDomains.isExternal(d.rootdomain)) {
@@ -640,14 +635,14 @@ fun DomainDetailView(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             t(Str.DnsRecords),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 16.sp,
+                            color = MiuixTheme.colorScheme.primary,
                             modifier = Modifier.weight(1f),
                         )
                         Text(
                             t(Str.DnsRecordCount, records.size),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                         )
                         Spacer(Modifier.width(10.dp))
                         Button(onClick = {
@@ -727,7 +722,7 @@ fun ConfirmOverlay(
     onDismiss: () -> Unit,
 ) {
     OverlayDialog(title = title, onDismiss = onDismiss, width = 460.dp) {
-        Text(text, style = MaterialTheme.typography.bodyMedium)
+        Text(text, fontSize = 14.sp)
         DialogButtons(
             onCancel = onDismiss,
             onConfirm = onConfirm,
@@ -745,41 +740,41 @@ private fun RecordRow(record: DnsRecord, onEdit: () -> Unit, onDelete: () -> Uni
                 modifier = Modifier
                     .width(58.dp)
                     .clip(RoundedCornerShape(6.dp))
-                    .background(MaterialTheme.colorScheme.primaryContainer)
+                    .background(MiuixTheme.colorScheme.primaryContainer)
                     .padding(vertical = 3.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     record.type,
-                    style = MaterialTheme.typography.labelLarge,
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    fontSize = 14.sp,
+                    color = MiuixTheme.colorScheme.onPrimaryContainer,
                 )
             }
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     record.name,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
+                    fontSize = 14.sp, fontFamily = FontFamily.Monospace,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
                     record.content,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
-                    color = MaterialTheme.colorScheme.onSurface,
+                    fontSize = 14.sp, fontFamily = FontFamily.Monospace,
+                    color = MiuixTheme.colorScheme.onSurface,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Spacer(Modifier.height(3.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
                     record.ttl?.let {
-                        Text("TTL $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("TTL $it", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
                     }
                     record.priority?.let {
-                        Text("PRI $it", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("PRI $it", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
                     }
                     if (!record.line.isNullOrBlank()) {
-                        Text("LINE ${record.line}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text("LINE ${record.line}", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
                     }
                     record.status?.let { StatusPill(it) }
                 }
@@ -791,7 +786,7 @@ private fun RecordRow(record: DnsRecord, onEdit: () -> Unit, onDelete: () -> Uni
                 Icon(
                     Icons.Filled.Delete,
                     contentDescription = t(Str.Delete),
-                    tint = MaterialTheme.colorScheme.error,
+                    tint = MiuixTheme.colorScheme.error,
                     modifier = Modifier.size(17.dp),
                 )
             }

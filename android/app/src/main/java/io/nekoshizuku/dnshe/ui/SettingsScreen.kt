@@ -22,17 +22,13 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
+import top.yukonga.miuix.kmp.basic.Scaffold
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.basic.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -46,6 +42,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.AppLinks
 import io.nekoshizuku.dnshe.BuildConfig
 import io.nekoshizuku.dnshe.R
@@ -53,13 +50,13 @@ import io.nekoshizuku.dnshe.data.AppContainer
 import io.nekoshizuku.dnshe.data.AppSettings
 import io.nekoshizuku.dnshe.data.Lang
 import io.nekoshizuku.dnshe.data.ThemeMode
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 import io.nekoshizuku.dnshe.i18n.Str
 import io.nekoshizuku.dnshe.i18n.t
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
     settings: AppSettings,
@@ -82,11 +79,11 @@ fun SettingsScreen(
     var confirmReset by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MiuixTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(t(Str.SettingsTitle)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                title = t(Str.SettingsTitle),
+                color = MiuixTheme.colorScheme.background,
             )
         },
     ) { pad ->
@@ -185,8 +182,8 @@ fun SettingsScreen(
                     )
                     Text(
                         t(Str.KeystoreNote),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
             }
@@ -364,7 +361,6 @@ fun SettingsScreen(
 
 /* ============================== 日志页 ============================== */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogsScreen(
     onBack: () -> Unit,
@@ -375,19 +371,19 @@ fun LogsScreen(
     val fmt = remember { SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault()) }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MiuixTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(t(Str.Logs)) },
+                title = t(Str.Logs),
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back)) }
+                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back), modifier = Modifier.size(24.dp)) }
                 },
                 actions = {
                     IconButton(onClick = { confirmClear = true }) {
-                        Icon(Icons.Filled.Delete, contentDescription = t(Str.ClearLogs))
+                        Icon(Icons.Filled.Delete, contentDescription = t(Str.ClearLogs), modifier = Modifier.size(24.dp))
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                color = MiuixTheme.colorScheme.background,
             )
         },
     ) { pad ->
@@ -406,32 +402,32 @@ fun LogsScreen(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         e.method,
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = if (e.ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                        fontSize = 14.sp,
+                                        color = if (e.ok) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.error,
                                         modifier = Modifier.width(52.dp),
                                     )
                                     Text(
                                         "${e.endpoint}${e.action?.let { "/$it" } ?: ""}",
-                                        style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
+                                        fontSize = 14.sp, fontFamily = FontFamily.Monospace,
                                         modifier = Modifier.weight(1f),
                                     )
                                     Text(
                                         "${e.httpStatus}",
-                                        style = MaterialTheme.typography.labelLarge,
-                                        color = if (e.ok) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                        fontSize = 14.sp,
+                                        color = if (e.ok) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.error,
                                     )
                                 }
                                 Spacer(Modifier.height(4.dp))
                                 Text(
                                     "${fmt.format(Date(e.time))} · ${e.ms} ms" + (e.errorCode?.let { " · $it" } ?: ""),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 12.sp,
+                                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                 )
                                 e.message?.let {
                                     Text(
                                         it,
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.error,
+                                        fontSize = 12.sp,
+                                        color = MiuixTheme.colorScheme.error,
                                     )
                                 }
                             }
@@ -458,19 +454,18 @@ fun LogsScreen(
 
 /* ============================== 关于页 ============================== */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(onBack: () -> Unit) {
     val ctx = LocalContext.current
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MiuixTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(t(Str.AboutTitle)) },
+                title = t(Str.AboutTitle),
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back)) }
+                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back), modifier = Modifier.size(24.dp)) }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                color = MiuixTheme.colorScheme.background,
             )
         },
     ) { pad ->
@@ -485,12 +480,12 @@ fun AboutScreen(onBack: () -> Unit) {
             Spacer(Modifier.height(18.dp))
             AppLogo(72.dp)
             Spacer(Modifier.height(10.dp))
-            Text(t(Str.AppName), style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
-            Text("v${BuildConfig.VERSION_NAME}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(t(Str.AppName), fontSize = 22.sp, color = MiuixTheme.colorScheme.primary)
+            Text("v${BuildConfig.VERSION_NAME}", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
             Spacer(Modifier.height(18.dp))
             AppCard {
                 Column {
-                    Text(t(Str.AboutDesc), style = MaterialTheme.typography.bodyMedium)
+                    Text(t(Str.AboutDesc), fontSize = 14.sp)
                     Spacer(Modifier.height(10.dp))
                     KeyValueRow(t(Str.Version), BuildConfig.VERSION_NAME)
                     KeyValueRow(t(Str.PackageName), BuildConfig.APPLICATION_ID, mono = true)
@@ -504,34 +499,34 @@ fun AboutScreen(onBack: () -> Unit) {
                         Icon(
                             painterResource(R.drawable.ic_open_in_new),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MiuixTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp),
                         )
                         Spacer(Modifier.width(10.dp))
                         Text(t(Str.OpenOfficialSite), modifier = Modifier.weight(1f))
-                        TextButton(onClick = { ctx.openUrl(AppLinks.SITE) }) { Text(t(Str.Ok)) }
+                        TextButton(text = t(Str.Ok), onClick = { ctx.openUrl(AppLinks.SITE) })
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             painterResource(R.drawable.ic_globe),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MiuixTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp),
                         )
                         Spacer(Modifier.width(10.dp))
                         Text("API 文档", modifier = Modifier.weight(1f))
-                        TextButton(onClick = { ctx.openUrl(AppLinks.DOC) }) { Text(t(Str.Ok)) }
+                        TextButton(text = t(Str.Ok), onClick = { ctx.openUrl(AppLinks.DOC) })
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
                             Icons.Filled.Info,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MiuixTheme.colorScheme.primary,
                             modifier = Modifier.size(20.dp),
                         )
                         Spacer(Modifier.width(10.dp))
                         Text(t(Str.OpenRegisterPage), modifier = Modifier.weight(1f))
-                        TextButton(onClick = { ctx.openUrl(AppLinks.REGISTER) }) { Text(t(Str.Ok)) }
+                        TextButton(text = t(Str.Ok), onClick = { ctx.openUrl(AppLinks.REGISTER) })
                     }
                 }
             }

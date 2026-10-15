@@ -17,15 +17,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
+import top.yukonga.miuix.kmp.basic.Button
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -45,12 +43,14 @@ import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.core.WinPaths
 import io.nekoshizuku.dnshe.core.WinReg
 import io.nekoshizuku.dnshe.core.WinShortcut
+import io.nekoshizuku.dnshe.desktop.Sys
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 private val BrandBlue = Color(0xFF3E6FD9)
 private val BrandBlueDark = Color(0xFF1E3E8C)
@@ -227,15 +227,15 @@ fun InstallWizard(args: List<String>) {
                     else -> "第 ${page.ordinal + 1} 步 / 共 ${IPage.entries.size - 1} 步"
                 },
                 fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                 modifier = Modifier.weight(1f),
             )
             if (page != IPage.PROGRESS && page != IPage.FINISH) {
-                TextButton(onClick = { kotlin.system.exitProcess(0) }) { Text("取消") }
+                TextButton(text = "取消", onClick = { kotlin.system.exitProcess(0) })
                 Spacer(Modifier.width(6.dp))
             }
             if (page.ordinal > 0 && page != IPage.PROGRESS && page != IPage.FINISH) {
-                OutlinedButton(onClick = { page = IPage.entries[page.ordinal - 1] }) { Text("上一步") }
+                TextButton(text = "上一步", onClick = { page = IPage.entries[page.ordinal - 1] })
                 Spacer(Modifier.width(6.dp))
             }
             when (page) {
@@ -301,7 +301,7 @@ private fun relaunchElevated(dir: File): Boolean = runCatching {
 
 @Composable
 private fun Frame(stepIndex: Int, stepCount: Int, content: @Composable () -> Unit, bottom: @Composable () -> Unit) {
-    Row(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    Row(modifier = Modifier.fillMaxSize().background(MiuixTheme.colorScheme.background)) {
         Box(
             modifier = Modifier.width(238.dp).fillMaxHeight()
                 .background(Brush.verticalGradient(listOf(BrandBlueDark, BrandBlue))),
@@ -320,10 +320,9 @@ private fun Frame(stepIndex: Int, stepCount: Int, content: @Composable () -> Uni
                 Text("安装进度", color = Color(0xFFBFD2FF), fontSize = 11.sp)
                 Spacer(Modifier.height(6.dp))
                 LinearProgressIndicator(
-                    progress = { stepIndex.toFloat() / stepCount.toFloat() },
+                    progress = stepIndex.toFloat() / stepCount.toFloat(),
                     modifier = Modifier.fillMaxWidth().height(4.dp),
-                    color = Color.White,
-                    trackColor = Color(0x553D6FD9),
+                    colors = top.yukonga.miuix.kmp.basic.ProgressIndicatorDefaults.progressIndicatorColors(foregroundColor = Color.White, backgroundColor = Color(0x553D6FD9)),
                 )
                 Spacer(Modifier.height(10.dp))
                 Text("(c) 2026 Nekoshizuku", color = Color(0x88FFFFFF), fontSize = 10.sp)
@@ -332,13 +331,13 @@ private fun Frame(stepIndex: Int, stepCount: Int, content: @Composable () -> Uni
         Column(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier.weight(1f).fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surface)
+                    .background(MiuixTheme.colorScheme.surface)
                     .verticalScroll(rememberScrollState())
                     .padding(26.dp),
             ) { content() }
             Column(
                 modifier = Modifier.fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                    .background(MiuixTheme.colorScheme.surfaceContainer)
                     .padding(horizontal = 20.dp, vertical = 12.dp),
             ) { bottom() }
         }
@@ -347,12 +346,12 @@ private fun Frame(stepIndex: Int, stepCount: Int, content: @Composable () -> Uni
 
 @Composable
 private fun Title(text: String) =
-    Text(text, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
+    Text(text, fontSize = 19.sp, fontWeight = FontWeight.SemiBold, color = MiuixTheme.colorScheme.onSurface)
 
 @Composable
 private fun Line(label: String, value: String) {
     Row(modifier = Modifier.padding(vertical = 2.dp)) {
-        Text(label, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.width(84.dp))
+        Text(label, fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary, modifier = Modifier.width(84.dp))
         Text(value, fontSize = 12.sp, fontFamily = FontFamily.Monospace)
     }
 }
@@ -362,7 +361,7 @@ private fun OptRow(selected: Boolean, title: String, desc: String, onClick: () -
     Row(
         modifier = Modifier.fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
-            .border(1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(10.dp))
+            .border(1.dp, if (selected) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.dividerLine, RoundedCornerShape(10.dp))
             .clickable { onClick() }
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -371,7 +370,7 @@ private fun OptRow(selected: Boolean, title: String, desc: String, onClick: () -
         Spacer(Modifier.width(6.dp))
         Column {
             Text(title, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-            Text(desc, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(desc, fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
         }
     }
 }
@@ -390,10 +389,10 @@ private fun WelcomePage() {
             "你手里有 API Key 和 API Secret",
             "安装过程不需要联网，程序运行时才需要",
         ).forEach {
-            Text("  ·  $it", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.padding(vertical = 2.dp))
+            Text("  ·  $it", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary, modifier = Modifier.padding(vertical = 2.dp))
         }
         Spacer(Modifier.height(16.dp))
-        Text("程序自带 Java 运行时，电脑上不用另外装 Java。", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text("程序自带 Java 运行时，电脑上不用另外装 Java。", fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
     }
 }
 
@@ -405,8 +404,8 @@ private fun LicensePage(accepted: Boolean, onAccepted: (Boolean) -> Unit) {
         Box(
             modifier = Modifier.fillMaxWidth().height(310.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.surfaceVariant)
+                .border(1.dp, MiuixTheme.colorScheme.dividerLine, RoundedCornerShape(8.dp))
+                .background(MiuixTheme.colorScheme.surfaceContainer)
                 .padding(14.dp)
                 .verticalScroll(rememberScrollState()),
         ) { Text(LICENSE_TEXT, fontSize = 11.5.sp, lineHeight = 17.sp) }
@@ -437,7 +436,7 @@ private fun ScopePage(perUser: Boolean, admin: Boolean, onChange: (Boolean) -> U
             onClick = { onChange(false) },
         )
         Spacer(Modifier.height(14.dp))
-        Text(if (admin) "当前以管理员身份运行。" else "当前不是管理员身份。", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(if (admin) "当前以管理员身份运行。" else "当前不是管理员身份。", fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
     }
 }
 
@@ -455,24 +454,18 @@ private fun PathPage(dir: File, onChange: (File) -> Unit) {
                 shape = RoundedCornerShape(8.dp),
             )
             Spacer(Modifier.width(10.dp))
-            OutlinedButton(onClick = {
-                runCatching {
-                    val fc = javax.swing.JFileChooser().apply {
-                        fileSelectionMode = javax.swing.JFileChooser.DIRECTORIES_ONLY
-                        dialogTitle = "选择安装目录"
-                    }
-                    if (fc.showOpenDialog(null) == javax.swing.JFileChooser.APPROVE_OPTION) {
-                        onChange(File(fc.selectedFile, WinPaths.APP_DATA_FOLDER))
-                    }
+            TextButton(text = "浏览…", onClick = {
+                Sys.pickDirectory("选择安装目录", dir)?.let { picked ->
+                    onChange(File(picked, WinPaths.APP_DATA_FOLDER))
                 }
-            }) { Text("浏览…") }
+            })
         }
         Spacer(Modifier.height(16.dp))
         Line("所需空间", "约 160 MB")
         Line("将安装到", dir.absolutePath)
         Line("用户数据", WinPaths.dataDir().absolutePath + "（不受影响）")
         Spacer(Modifier.height(12.dp))
-        Text("提示：装到系统盘以外的位置也完全可以，程序不会往安装目录写用户数据。", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text("提示：装到系统盘以外的位置也完全可以，程序不会往安装目录写用户数据。", fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
     }
 }
 
@@ -492,7 +485,7 @@ private fun OptionsPage(d: Boolean, s: Boolean, l: Boolean, onChange: (Boolean, 
             "卸载程序会一起装到安装目录（Uninstall.exe），随时可以在\n" +
                 "「设置 → 应用」里卸载，也可以用开始菜单里的卸载入口。",
             fontSize = 11.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
             lineHeight = 17.sp,
         )
     }
@@ -512,17 +505,17 @@ private fun ProgressPage(progress: Int, status: String, error: String?) {
         Title(if (error == null) "正在安装" else "出错了")
         Spacer(Modifier.height(18.dp))
         LinearProgressIndicator(
-            progress = { progress / 100f },
+            progress = progress / 100f,
             modifier = Modifier.fillMaxWidth().height(8.dp),
-            trackColor = MaterialTheme.colorScheme.surfaceVariant,
-        )
+                    colors = top.yukonga.miuix.kmp.basic.ProgressIndicatorDefaults.progressIndicatorColors(backgroundColor = MiuixTheme.colorScheme.surfaceContainer),
+                )
         Spacer(Modifier.height(10.dp))
-        Text("$progress%   $status", fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text("$progress%   $status", fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
         if (error != null) {
             Spacer(Modifier.height(16.dp))
             Box(modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.errorContainer).padding(12.dp)) {
-                Text(error, fontSize = 12.sp, color = MaterialTheme.colorScheme.onErrorContainer)
+                .background(MiuixTheme.colorScheme.errorContainer).padding(12.dp)) {
+                Text(error, fontSize = 12.sp, color = MiuixTheme.colorScheme.error)
             }
         }
     }
@@ -543,14 +536,14 @@ private fun FinishPage(dir: File, launchAfter: Boolean) {
             "打开程序后，在「账号」页添加你的 API Key / Secret 就能用了。\n" +
                 "手机版导出的 .json 备份可以直接在这边导入，反过来也行。",
             fontSize = 12.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
             lineHeight = 18.sp,
         )
         Spacer(Modifier.height(12.dp))
         Text(
             if (launchAfter) "点「完成」会自动启动程序。" else "点「完成」关闭安装向导。",
             fontSize = 11.sp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
         )
     }
 }

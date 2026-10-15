@@ -11,6 +11,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import io.nekoshizuku.dnshe.core.AppCore
 import io.nekoshizuku.dnshe.core.ThemeMode
+import io.nekoshizuku.dnshe.desktop.Sys
 import io.nekoshizuku.dnshe.desktop.i18n.Str
 import io.nekoshizuku.dnshe.desktop.i18n.t
 import io.nekoshizuku.dnshe.desktop.ui.AppRoot
@@ -74,6 +75,7 @@ fun main(args: Array<String>) = application {
             resizable = false,
         ) {
             ApplyWindowIcon(window)
+            Sys.mainWindow = window
             ShizukuTheme(ThemeMode.LIGHT) {
                 UninstallWizard(args.toList())
             }
@@ -90,6 +92,7 @@ fun main(args: Array<String>) = application {
             resizable = false,
         ) {
             ApplyWindowIcon(window)
+            Sys.mainWindow = window
             ShizukuTheme(ThemeMode.LIGHT) {
                 InstallWizard(args.toList())
             }
@@ -124,6 +127,7 @@ fun main(args: Array<String>) = application {
         icon = dialogIcon,
     ) {
         ApplyWindowIcon(window)
+        Sys.mainWindow = window
         LaunchedEffect(Unit) {
             window.minimumSize = Dimension(980, 640)
         }

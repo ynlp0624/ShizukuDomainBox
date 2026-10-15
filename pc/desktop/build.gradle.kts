@@ -18,6 +18,10 @@ dependencies {
     implementation(compose.materialIconsExtended)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-swing:1.10.2")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    // 调 Windows 原生文件夹选择器（SHBrowseForFolder），绕开 jpackage 运行时里
+    // JFileChooser 弹不出来的问题；jna 本来就随 compose.desktop 传递进来，显式声明只是让它进编译期
+    implementation("net.java.dev.jna:jna:5.14.0")
+    implementation("net.java.dev.jna:jna-platform:5.14.0")
 
     // ---- Miuix（HyperOS 风格组件库）----
     implementation("top.yukonga.miuix.kmp:miuix-ui:0.9.4")

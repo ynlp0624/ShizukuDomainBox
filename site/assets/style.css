@@ -553,6 +553,27 @@ code {
 
 .hint { margin-top: 12px; color: var(--text-3); font-size: 12.5px; line-height: 1.65; }
 
+/* 镜像下载链接行 */
+.mirrors {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+.mirrors a {
+  padding: .3em .75em;
+  border-radius: var(--r-pill);
+  background: var(--bg);
+  color: var(--text-2);
+  font-weight: 500;
+  transition: background .15s, color .15s;
+}
+[data-theme="dark"] .mirrors a { background: #1E1E1E; }
+.mirrors a:hover { background: var(--brand-container); color: var(--brand); text-decoration: none; }
+
 /* 提示块：HyperOS 风格的浅底 + 左侧色条 */
 .notice {
   display: flex; gap: 16px;
@@ -599,7 +620,48 @@ code {
 
 .faq-body { padding: 0 22px 20px; }
 .faq-body p { color: var(--text-2); font-size: 14.5px; line-height: 1.85; }
+.faq-body p + p { margin-top: 10px; }
 .faq-body b { color: var(--text); }
+
+/* 仓库列表（开源那条 FAQ） */
+.repo-list {
+  margin: 12px 0 14px;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.repo-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border-radius: var(--r-md);
+  background: var(--bg);
+}
+[data-theme="dark"] .repo-list li { background: #1E1E1E; }
+.repo-list .ico {
+  width: 18px; height: 18px;
+  flex: 0 0 auto;
+  color: var(--text-3);
+}
+.repo-list a {
+  font-size: 14px;
+  font-weight: 500;
+  word-break: break-all;
+}
+.repo-tag {
+  margin-left: auto;
+  flex: 0 0 auto;
+  padding: .22em .68em;
+  border-radius: var(--r-pill);
+  background: var(--brand-container);
+  color: var(--brand);
+  font-size: 11px;
+  font-weight: 600;
+}
+
 .faq-body code {
   padding: .15em .45em;
   border-radius: 6px;

@@ -30,18 +30,14 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.FloatingActionButton
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
+import top.yukonga.miuix.kmp.basic.Scaffold
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.basic.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +52,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.AppLinks
 import io.nekoshizuku.dnshe.R
 import io.nekoshizuku.dnshe.data.Account
@@ -63,6 +60,8 @@ import io.nekoshizuku.dnshe.data.AppContainer
 import io.nekoshizuku.dnshe.data.Creds
 import io.nekoshizuku.dnshe.data.apiErrorMessage
 import io.nekoshizuku.dnshe.i18n.LocalLang
+import top.yukonga.miuix.kmp.overlay.OverlayDialog
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 import io.nekoshizuku.dnshe.i18n.Str
 import io.nekoshizuku.dnshe.i18n.fmt
 import io.nekoshizuku.dnshe.i18n.t
@@ -130,7 +129,6 @@ fun Context.openUrl(url: String) {
 
 /* ============================ 账号页 ============================== */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountsScreen(
     accounts: List<Account>,
@@ -191,16 +189,16 @@ fun AccountsScreen(
     }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MiuixTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(t(Str.AccountsTitle)) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                title = t(Str.AccountsTitle),
+                color = MiuixTheme.colorScheme.background,
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { creating = true }) {
-                Icon(Icons.Filled.Add, contentDescription = t(Str.AddAccount))
+                Icon(Icons.Filled.Add, contentDescription = t(Str.AddAccount), modifier = Modifier.size(24.dp))
             }
         },
     ) { pad ->
@@ -240,11 +238,11 @@ fun AccountsScreen(
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text(
                             t(Str.KeystoreNote),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                         )
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(
+                            Button(
                                 onClick = { passwordInput = ""; showExportDialog = true },
                                 modifier = Modifier.weight(1f),
                             ) {
@@ -256,7 +254,7 @@ fun AccountsScreen(
                                 Spacer(Modifier.width(6.dp))
                                 Text(t(Str.ExportBackup))
                             }
-                            OutlinedButton(
+                            Button(
                                 onClick = { importLauncher.launch(arrayOf("application/json", "text/plain", "*/*")) },
                                 modifier = Modifier.weight(1f),
                             ) {
@@ -279,13 +277,13 @@ fun AccountsScreen(
                         Column {
                             Text(
                                 t(Str.PasteFromClipboard),
-                                style = MaterialTheme.typography.titleSmall,
+                                fontSize = 14.sp,
                             )
                             Spacer(Modifier.height(4.dp))
                             Text(
                                 t(Str.ClipboardDetectDesc),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 12.sp,
+                                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                             )
                             Spacer(Modifier.height(8.dp))
                             Button(
@@ -316,15 +314,11 @@ fun AccountsScreen(
             item {
                 AppCard {
                     Column {
-                        Text(t(Str.NoAccountHint), style = MaterialTheme.typography.bodyMedium)
+                        Text(t(Str.NoAccountHint), fontSize = 14.sp)
                         Spacer(Modifier.height(8.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { ctx.openUrl(AppLinks.REGISTER) }) {
-                                Text(t(Str.OpenRegisterPage))
-                            }
-                            OutlinedButton(onClick = { ctx.openUrl(AppLinks.SITE) }) {
-                                Text(t(Str.OpenOfficialSite))
-                            }
+                            TextButton(text = t(Str.OpenRegisterPage), onClick = { ctx.openUrl(AppLinks.REGISTER) })
+                            TextButton(text = t(Str.OpenOfficialSite), onClick = { ctx.openUrl(AppLinks.SITE) })
                         }
                     }
                 }
@@ -406,13 +400,13 @@ private fun AccountCard(
                 Icon(
                     Icons.Filled.Person,
                     contentDescription = null,
-                    tint = if (isCurrent) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                    tint = if (isCurrent) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     modifier = Modifier.size(20.dp),
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = account.name.ifBlank { account.apiKey.take(12) },
-                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = 16.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -421,14 +415,14 @@ private fun AccountCard(
                     Icon(
                         Icons.Filled.Star,
                         contentDescription = t(Str.CurrentAccount),
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MiuixTheme.colorScheme.primary,
                         modifier = Modifier.size(18.dp),
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
                         t(Str.CurrentAccount),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 11.sp,
+                        color = MiuixTheme.colorScheme.primary,
                     )
                 }
             }
@@ -436,16 +430,16 @@ private fun AccountCard(
             Spacer(Modifier.height(6.dp))
             Text(
                 text = account.maskedKey,
-                style = MaterialTheme.typography.bodySmall.copy(fontFamily = FontFamily.Monospace),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                fontSize = 12.sp, fontFamily = FontFamily.Monospace,
+                color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
             )
 
             if (account.defaultRootDomain.isNotBlank()) {
                 Spacer(Modifier.height(2.dp))
                 Text(
                     text = "@" + account.defaultRootDomain,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 12.sp,
+                    color = MiuixTheme.colorScheme.secondary,
                 )
             }
 
@@ -455,14 +449,14 @@ private fun AccountCard(
                     Icon(
                         Icons.Filled.Warning,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.error,
+                        tint = MiuixTheme.colorScheme.error,
                         modifier = Modifier.size(14.dp),
                     )
                     Spacer(Modifier.width(5.dp))
                     Text(
                         text = t(Str.AccountKeyBroken),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.error,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.error,
                     )
                 }
             }
@@ -470,7 +464,7 @@ private fun AccountCard(
             Spacer(Modifier.height(6.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (!isCurrent) {
-                    TextButton(onClick = onSelect) { Text(t(Str.SwitchTo)) }
+                    TextButton(text = t(Str.SwitchTo), onClick = onSelect)
                 }
                 Spacer(Modifier.weight(1f))
                 IconButton(onClick = onEdit) {
@@ -480,7 +474,7 @@ private fun AccountCard(
                     Icon(
                         Icons.Filled.Delete,
                         contentDescription = t(Str.Delete),
-                        tint = MaterialTheme.colorScheme.error,
+                        tint = MiuixTheme.colorScheme.error,
                         modifier = Modifier.size(18.dp),
                     )
                 }
@@ -546,14 +540,17 @@ private fun AccountEditorDialog(
                 revealSecret = reveal,
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { reveal = !reveal }, modifier = Modifier.weight(1f)) {
-                    Text(if (reveal) t(Str.HideSecret) else t(Str.ShowSecret))
-                }
-                OutlinedButton(
-                    onClick = {
+                TextButton(
+                               text = if (reveal) t(Str.HideSecret) else t(Str.ShowSecret),
+                               onClick = { reveal = !reveal },
+                               modifier = Modifier.weight(1f),
+                )
+                TextButton(
+                               text = if (testing) t(Str.Loading) else t(Str.TestConnection),
+                               onClick = {
                         if (key.isBlank() || secret.isBlank()) {
                             onToast(t(Str.ApiKeyRequired))
-                            return@OutlinedButton
+                            return@TextButton
                         }
                         testing = true
                         scope.launch {
@@ -578,11 +575,9 @@ private fun AccountEditorDialog(
                             }
                         }
                     },
-                    enabled = !testing,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text(if (testing) t(Str.Loading) else t(Str.TestConnection))
-                }
+                               enabled = !testing,
+                               modifier = Modifier.weight(1f),
+                )
             }
             AppTextField(
                 value = root,
@@ -606,7 +601,7 @@ private fun AccountEditorDialog(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-                OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) { Text(t(Str.Cancel)) }
+                TextButton(text = t(Str.Cancel), onClick = onDismiss, modifier = Modifier.weight(1f))
                 Button(
                     onClick = {
                         if (key.isBlank() || secret.isBlank()) {
@@ -645,22 +640,34 @@ fun InputDialog(
     onConfirm: (String) -> Unit,
 ) {
     var value by remember { mutableStateOf(initial) }
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(title) },
-        text = {
-            Column {
-                AppTextField(
-                    value = value,
-                    onValueChange = { value = it },
-                    label = label,
-                    hint = hint,
-                    isSecret = isSecret,
+    var dlgShow by remember { mutableStateOf(true) }
+    OverlayDialog(
+        show = dlgShow,
+        title = title,
+        renderInRootScaffold = false,
+        onDismissRequest = { dlgShow = false; onDismiss() },
+    ) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            AppTextField(
+                value = value,
+                onValueChange = { value = it },
+                label = label,
+                hint = hint,
+                isSecret = isSecret,
+            )
+            Spacer(Modifier.height(14.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                TextButton(
+                    text = t(Str.Cancel),
+                    onClick = { dlgShow = false; onDismiss() },
+                    modifier = Modifier.weight(1f),
+                )
+                TextButton(
+                    text = confirmLabel,
+                    onClick = { dlgShow = false; onConfirm(value) },
+                    modifier = Modifier.weight(1f),
                 )
             }
-        },
-        confirmButton = { TextButton(onClick = { onConfirm(value); }) { Text(confirmLabel) } },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(t(Str.Cancel)) } },
-        shape = RoundedCornerShape(24.dp),
-    )
+        }
+    }
 }

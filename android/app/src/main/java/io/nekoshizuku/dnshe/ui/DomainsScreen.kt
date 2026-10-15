@@ -23,21 +23,17 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import top.yukonga.miuix.kmp.basic.FloatingActionButton
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
+import top.yukonga.miuix.kmp.basic.Scaffold
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
+import top.yukonga.miuix.kmp.basic.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -54,6 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.R
 import io.nekoshizuku.dnshe.data.Account
 import io.nekoshizuku.dnshe.data.ApiException
@@ -65,6 +62,7 @@ import io.nekoshizuku.dnshe.data.RootDomains
 import io.nekoshizuku.dnshe.data.Subdomain
 import io.nekoshizuku.dnshe.data.apiErrorMessage
 import io.nekoshizuku.dnshe.i18n.LocalLang
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 import io.nekoshizuku.dnshe.i18n.Str
 import io.nekoshizuku.dnshe.i18n.t
 import kotlinx.coroutines.delay
@@ -72,7 +70,6 @@ import kotlinx.coroutines.launch
 
 /* ============================ 域名列表 ============================= */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DomainsScreen(
     account: Account?,
@@ -226,8 +223,8 @@ fun DomainsScreen(
                     item {
                         Text(
                             t(Str.StatTotal, items.size),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                             modifier = Modifier.padding(start = 4.dp),
                         )
                     }
@@ -240,7 +237,7 @@ fun DomainsScreen(
                                 if (loadingMore) {
                                     CircularProgressIndicator(strokeWidth = 2.dp, modifier = Modifier.size(24.dp))
                                 } else {
-                                    OutlinedButton(onClick = { scope.launch { load(false) } }) { Text(t(Str.LoadMore)) }
+                                    TextButton(text = t(Str.LoadMore), onClick = { scope.launch { load(false) } })
                                 }
                             }
                         }
@@ -249,8 +246,8 @@ fun DomainsScreen(
                             Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                                 Text(
                                     t(Str.NoMoreData),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 12.sp,
+                                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                 )
                             }
                         }
@@ -269,13 +266,13 @@ private fun DomainCard(domain: Subdomain, onClick: () -> Unit) {
                 Icon(
                     painterResource(R.drawable.ic_dns),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
+                    tint = MiuixTheme.colorScheme.primary,
                     modifier = Modifier.size(18.dp),
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = domain.displayDomain,
-                    style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
+                    fontSize = 16.sp, fontFamily = FontFamily.Monospace,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -299,7 +296,6 @@ private fun DomainCard(domain: Subdomain, onClick: () -> Unit) {
 
 /* ============================ 注册子域名 ============================ */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterDomainScreen(
     account: Account?,
@@ -321,14 +317,14 @@ fun RegisterDomainScreen(
     var manualRoot by remember { mutableStateOf(false) }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MiuixTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text(t(Str.RegisterDomainTitle)) },
+                title = t(Str.RegisterDomainTitle),
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back)) }
+                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back), modifier = Modifier.size(24.dp)) }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                color = MiuixTheme.colorScheme.background,
             )
         },
     ) { pad ->
@@ -354,8 +350,8 @@ fun RegisterDomainScreen(
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             t(Str.RootDomain),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                             modifier = Modifier.weight(1f),
                         )
                         RootDomainBadge(root)
@@ -363,13 +359,13 @@ fun RegisterDomainScreen(
                     Spacer(Modifier.height(4.dp))
                     Text(
                         text = root.ifBlank { t(Str.ChooseRootDomain) },
-                        style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
+                        fontSize = 16.sp, fontFamily = FontFamily.Monospace,
                         color = if (root.isBlank()) {
-                            MaterialTheme.colorScheme.onSurfaceVariant
+                            MiuixTheme.colorScheme.onSurfaceVariantSummary
                         } else if (RootDomains.isExternal(root)) {
-                            MaterialTheme.colorScheme.error
+                            MiuixTheme.colorScheme.error
                         } else {
-                            MaterialTheme.colorScheme.onSurface
+                            MiuixTheme.colorScheme.onSurface
                         },
                     )
                 }
@@ -389,11 +385,12 @@ fun RegisterDomainScreen(
                 )
             } else {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    TextButton(onClick = { manualRoot = true }) { Text(t(Str.RootDomainManualInput)) }
+                    TextButton(text = t(Str.RootDomainManualInput), onClick = { manualRoot = true })
                     if (account?.defaultRootDomain?.isNotBlank() == true) {
-                        TextButton(onClick = { root = account.defaultRootDomain }) {
-                            Text(t(Str.UseDefaultRoot, account.defaultRootDomain))
-                        }
+                        TextButton(
+                                   text = t(Str.UseDefaultRoot, account.defaultRootDomain),
+                                   onClick = { root = account.defaultRootDomain },
+                        )
                     }
                 }
             }
@@ -404,14 +401,14 @@ fun RegisterDomainScreen(
                     Column {
                         Text(
                             t(Str.FullDomainPreview),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                         )
                         Spacer(Modifier.height(4.dp))
                         Text(
                             text = "$sub.$root",
-                            style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
-                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 16.sp, fontFamily = FontFamily.Monospace,
+                            color = MiuixTheme.colorScheme.primary,
                         )
                     }
                 }
@@ -472,7 +469,6 @@ fun RegisterDomainScreen(
 
 /* ============================ 域名详情 ============================= */
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DomainDetailScreen(
     subdomainId: Long,
@@ -515,26 +511,20 @@ fun DomainDetailScreen(
     LaunchedEffect(subdomainId, tick) { load() }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
+        containerColor = MiuixTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = {
-                    Text(
-                        detail?.displayDomain ?: t(Str.DomainDetailTitle),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
+                title = detail?.displayDomain ?: t(Str.DomainDetailTitle),
                 navigationIcon = {
-                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back)) }
+                    IconButton(onClick = onBack) { Icon(Icons.Filled.ArrowBack, contentDescription = t(Str.Back), modifier = Modifier.size(24.dp)) }
                 },
                 actions = {
                     IconButton(onClick = { scope.launch { tick++; } }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = t(Str.Refresh))
+                        Icon(Icons.Filled.Refresh, contentDescription = t(Str.Refresh), modifier = Modifier.size(24.dp))
                     }
                     Box {
                         IconButton(onClick = { menuOpen = true }) {
-                            Icon(Icons.Filled.MoreVert, contentDescription = t(Str.More))
+                            Icon(Icons.Filled.MoreVert, contentDescription = t(Str.More), modifier = Modifier.size(24.dp))
                         }
                         DropdownMenu(expanded = menuOpen, onDismissRequest = { menuOpen = false }) {
                             DropdownMenuItem(
@@ -542,19 +532,19 @@ fun DomainDetailScreen(
                                 onClick = { menuOpen = false; confirmRenew = true },
                             )
                             DropdownMenuItem(
-                                text = { Text(t(Str.DeleteDomain), color = MaterialTheme.colorScheme.error) },
+                                text = { Text(t(Str.DeleteDomain), color = MiuixTheme.colorScheme.error) },
                                 onClick = { menuOpen = false; confirmDeleteDomain = true },
                             )
                         }
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background),
+                color = MiuixTheme.colorScheme.background,
             )
         },
         floatingActionButton = {
             if (detail != null) {
                 FloatingActionButton(onClick = { creatingRecord = true }) {
-                    Icon(Icons.Filled.Add, contentDescription = t(Str.AddRecord))
+                    Icon(Icons.Filled.Add, contentDescription = t(Str.AddRecord), modifier = Modifier.size(24.dp))
                 }
             }
         },
@@ -570,7 +560,7 @@ fun DomainDetailScreen(
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Text(
                                     d.displayDomain,
-                                    style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
+                                    fontSize = 16.sp, fontFamily = FontFamily.Monospace,
                                     modifier = Modifier.weight(1f),
                                 )
                                 if (RootDomains.isExternal(d.rootdomain)) {
@@ -600,14 +590,14 @@ fun DomainDetailScreen(
                     ) {
                         Text(
                             t(Str.DnsRecords),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.primary,
+                            fontSize = 16.sp,
+                            color = MiuixTheme.colorScheme.primary,
                             modifier = Modifier.weight(1f),
                         )
                         Text(
                             t(Str.DnsRecordCount, records.size),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                         )
                     }
 
@@ -728,13 +718,13 @@ private fun RecordCard(record: DnsRecord, onEdit: () -> Unit, onDelete: () -> Un
                 ) {
                     Text(
                         text = record.type,
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 14.sp, fontWeight = FontWeight.Bold,
+                        color = MiuixTheme.colorScheme.primary,
                     )
                 }
                 Text(
                     text = record.name,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
+                    fontSize = 14.sp, fontFamily = FontFamily.Monospace,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.weight(1f),
@@ -746,39 +736,39 @@ private fun RecordCard(record: DnsRecord, onEdit: () -> Unit, onDelete: () -> Un
                     Icon(
                         Icons.Filled.Delete,
                         contentDescription = t(Str.Delete),
-                        tint = MaterialTheme.colorScheme.error,
+                        tint = MiuixTheme.colorScheme.error,
                         modifier = Modifier.size(18.dp),
                     )
                 }
             }
             Text(
                 text = record.content,
-                style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace),
-                color = MaterialTheme.colorScheme.onSurface,
+                fontSize = 14.sp, fontFamily = FontFamily.Monospace,
+                color = MiuixTheme.colorScheme.onSurface,
             )
             Spacer(Modifier.height(4.dp))
             Row {
                 if (record.ttl != null) {
                     Text(
                         "TTL ${record.ttl}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
                 if (record.priority != null) {
                     Spacer(Modifier.width(10.dp))
                     Text(
                         "PRI ${record.priority}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
                 if (!record.line.isNullOrBlank()) {
                     Spacer(Modifier.width(10.dp))
                     Text(
                         "LINE ${record.line}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
                 record.status?.let {
@@ -839,9 +829,11 @@ private fun RecordEditorDialog(
         ) {
             // 类型
             Box {
-                OutlinedButton(onClick = { typeMenu = true }, modifier = Modifier.fillMaxWidth()) {
-                    Text("${t(Str.RecordType)}: $type")
-                }
+                TextButton(
+                               text = "${t(Str.RecordType)}: $type",
+                               onClick = { typeMenu = true },
+                               modifier = Modifier.fillMaxWidth(),
+                )
                 DropdownMenu(expanded = typeMenu, onDismissRequest = { typeMenu = false }) {
                     RECORD_TYPES.forEach { ty ->
                         DropdownMenuItem(
@@ -924,7 +916,7 @@ private fun RecordEditorDialog(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-                OutlinedButton(onClick = onDismiss, modifier = Modifier.weight(1f)) { Text(t(Str.Cancel)) }
+                TextButton(text = t(Str.Cancel), onClick = onDismiss, modifier = Modifier.weight(1f))
                 Button(
                     enabled = !busy,
                     modifier = Modifier.weight(1f),

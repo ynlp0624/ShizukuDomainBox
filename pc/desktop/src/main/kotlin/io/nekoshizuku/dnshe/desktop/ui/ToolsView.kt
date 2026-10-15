@@ -25,15 +25,13 @@ import androidx.compose.material.icons.filled.RocketLaunch
 import androidx.compose.material.icons.filled.Dns
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.VpnKey
-import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
+import top.yukonga.miuix.kmp.basic.Icon
+import top.yukonga.miuix.kmp.basic.IconButton
+import top.yukonga.miuix.kmp.basic.Switch
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -48,6 +46,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.core.Account
 import io.nekoshizuku.dnshe.core.ApiKeyInfo
 import io.nekoshizuku.dnshe.core.AppCore
@@ -66,6 +65,7 @@ import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.jsonPrimitive
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 /* ============================ 工具箱首页 ============================ */
 
@@ -98,24 +98,24 @@ fun ToolsView(
                                     modifier = Modifier
                                         .size(46.dp)
                                         .clip(RoundedCornerShape(12.dp))
-                                        .background(MaterialTheme.colorScheme.primaryContainer),
+                                        .background(MiuixTheme.colorScheme.primaryContainer),
                                     contentAlignment = Alignment.Center,
                                 ) {
                                     Icon(
                                         e.icon,
                                         contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                        tint = MiuixTheme.colorScheme.onPrimaryContainer,
                                         modifier = Modifier.size(24.dp),
                                     )
                                 }
                                 Spacer(Modifier.width(14.dp))
                                 Column {
-                                    Text(e.title.of(LocalLang.current), style = MaterialTheme.typography.titleMedium)
+                                    Text(e.title.of(LocalLang.current), fontSize = 16.sp)
                                     Spacer(Modifier.height(3.dp))
                                     Text(
                                         e.desc.of(LocalLang.current),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp,
+                                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                     )
                                     if (e.needsAccount && !hasAccount) {
                                         Spacer(Modifier.height(5.dp))
@@ -123,14 +123,14 @@ fun ToolsView(
                                             Icon(
                                                 Icons.Filled.Lock,
                                                 contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.error,
+                                                tint = MiuixTheme.colorScheme.error,
                                                 modifier = Modifier.size(12.dp),
                                             )
                                             Spacer(Modifier.width(4.dp))
                                             Text(
                                                 t(Str.NoAccountForTool),
-                                                style = MaterialTheme.typography.labelSmall,
-                                                color = MaterialTheme.colorScheme.error,
+                                                fontSize = 11.sp,
+                                                color = MiuixTheme.colorScheme.error,
                                             )
                                         }
                                     }
@@ -191,13 +191,13 @@ fun QuotaView(account: Account?, settings: AppSettings, onBack: () -> Unit) {
                     Spacer(Modifier.height(10.dp))
                     Box(contentAlignment = Alignment.Center) {
                         CircularProgressIndicator(
-                            progress = { ratio.coerceIn(0f, 1f) },
+                            progress = ratio.coerceIn(0f, 1f),
                             strokeWidth = 12.dp,
-                            modifier = Modifier.size(170.dp),
+                            size = 170.dp,
                         )
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("${q.available}", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.primary)
-                            Text(t(Str.QuotaAvailable), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            Text("${q.available}", fontSize = 22.sp, color = MiuixTheme.colorScheme.primary)
+                            Text(t(Str.QuotaAvailable), fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
                         }
                     }
                     Spacer(Modifier.height(24.dp))
@@ -244,7 +244,7 @@ fun ApiKeysView(
     fun showSecret(title: String, apiKey: String, apiSecret: String) {
         host.show {
             OverlayDialog(title = title, onDismiss = { host.dismiss() }, width = 620.dp) {
-                Text(t(Str.KeyCreatedWarning), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+                Text(t(Str.KeyCreatedWarning), fontSize = 14.sp, color = MiuixTheme.colorScheme.error)
                 InfoRow(t(Str.ApiKey), apiKey, mono = true) { Sys.copyToClipboard(apiKey); onToast(t(Str.Copied)) }
                 InfoRow(t(Str.ApiSecret), apiSecret, mono = true) { Sys.copyToClipboard(apiSecret); onToast(t(Str.Copied)) }
                 DialogButtons(
@@ -253,13 +253,11 @@ fun ApiKeysView(
                     confirmLabel = t(Str.Close),
                     extra = {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            OutlinedButton(onClick = { Sys.copyToClipboard("$apiKey\n$apiSecret"); onToast(t(Str.Copied)) }) {
-                                Text(t(Str.Copy))
-                            }
-                            OutlinedButton(onClick = {
+                            TextButton(text = t(Str.Copy), onClick = { Sys.copyToClipboard("$apiKey\n$apiSecret"); onToast(t(Str.Copied)) })
+                            TextButton(text = t(Str.SaveAsAccount), onClick = {
                                 onSaveAsAccount(apiKey, apiSecret, t(Str.KeysTitle))
                                 host.dismiss()
-                            }) { Text(t(Str.SaveAsAccount)) }
+                            })
                         }
                     },
                 )
@@ -306,7 +304,7 @@ fun ApiKeysView(
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     Text(
                                         k.keyName.ifBlank { "(unnamed)" },
-                                        style = MaterialTheme.typography.titleMedium,
+                                        fontSize = 16.sp,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                     )
@@ -320,28 +318,25 @@ fun ApiKeysView(
                                 Row(horizontalArrangement = Arrangement.spacedBy(28.dp)) {
                                     Text(
                                         "${t(Str.RequestCount)}: ${k.requestCount ?: 0}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp,
+                                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                     )
                                     Text(
                                         "${t(Str.LastUsed)}: ${k.lastUsedAt ?: "-"}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp,
+                                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                     )
                                     Text(
                                         "${t(Str.CreatedAt)}: ${k.createdAt ?: "-"}",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp,
+                                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                     )
                                 }
                             }
-                            TextButton(onClick = {
+                            TextButton(text = t(Str.SecretRegenerate), onClick = {
                                 host.show {
                                     ConfirmOverlay(
-                                        title = t(Str.SecretRegenerate),
-                                        text = t(Str.RegenerateConfirm, k.keyName),
-                                        destructive = true,
-                                        onConfirm = {
+                                        title = t(Str.SecretRegenerate), text = t(Str.RegenerateConfirm, k.keyName), destructive = true, onConfirm = {
                                             host.dismiss()
                                             val acc = account ?: return@ConfirmOverlay
                                             scope.launch {
@@ -352,11 +347,10 @@ fun ApiKeysView(
                                                     showSecret(t(Str.KeyRegeneratedTitle), r.apiKey ?: k.apiKey, r.apiSecret ?: "")
                                                 }.onFailure { onToast(apiErrorMessage(lang, it)) }
                                             }
-                                        },
-                                        onDismiss = { host.dismiss() },
+                                        }, onDismiss = { host.dismiss() },
                                     )
                                 }
-                            }) { Text(t(Str.SecretRegenerate)) }
+                            })
                             IconButton(onClick = {
                                 host.show {
                                     ConfirmOverlay(
@@ -380,7 +374,7 @@ fun ApiKeysView(
                                 Icon(
                                     Icons.Filled.Delete,
                                     contentDescription = t(Str.Delete),
-                                    tint = MaterialTheme.colorScheme.error,
+                                    tint = MiuixTheme.colorScheme.error,
                                     modifier = Modifier.size(17.dp),
                                 )
                             }
@@ -474,17 +468,17 @@ fun WhoisView(
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.width(360.dp)) {
-                    Text(t(Str.WhoisUseAccount), style = MaterialTheme.typography.bodyMedium)
+                    Text(t(Str.WhoisUseAccount), fontSize = 14.sp)
                     Text(
                         t(Str.WhoisPublicMode),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSize = 12.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                     )
                 }
                 Switch(checked = useAccount, onCheckedChange = { useAccount = it })
             }
             if (account == null) {
-                Text(t(Str.WhoisNeedKey), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.error)
+                Text(t(Str.WhoisNeedKey), fontSize = 12.sp, color = MiuixTheme.colorScheme.error)
             }
             Button(
                 enabled = !busy && domain.isNotBlank(),
@@ -514,7 +508,7 @@ fun WhoisView(
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
                                 r.domain ?: domain,
-                                style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace),
+                                fontSize = 16.sp, fontFamily = FontFamily.Monospace,
                                 modifier = Modifier.weight(1f),
                             )
                             StatusPill(r.status)
@@ -525,14 +519,14 @@ fun WhoisView(
                             Icon(
                                 imageVector = if (registered) Icons.Filled.CheckCircle else Icons.Filled.Cancel,
                                 contentDescription = null,
-                                tint = if (registered) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                tint = if (registered) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                 modifier = Modifier.size(17.dp),
                             )
                             Spacer(Modifier.width(6.dp))
                             Text(
                                 if (registered) t(Str.WhoisRegistered) else t(Str.WhoisUnregistered),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = if (registered) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 14.sp,
+                                color = if (registered) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.onSurfaceVariantSummary,
                             )
                         }
                         Spacer(Modifier.height(6.dp))
@@ -601,13 +595,10 @@ fun UpgradeView(
                     }
                 },
             ) { Text(t(Str.UpgradeApplyTitle)) }
-            OutlinedButton(onClick = {
+            TextButton(text = t(Str.UpgradeAssistTitle), onClick = {
                 host.show {
                     InputOverlay(
-                        title = t(Str.UpgradeAssistTitle),
-                        label = t(Str.UpgradeAssistTitle),
-                        hint = t(Str.UpgradeAssistHint),
-                        onConfirm = { v ->
+                        title = t(Str.UpgradeAssistTitle), label = t(Str.UpgradeAssistTitle), hint = t(Str.UpgradeAssistHint), onConfirm = { v ->
                             host.dismiss()
                             val acc = account ?: return@InputOverlay
                             scope.launch {
@@ -615,11 +606,10 @@ fun UpgradeView(
                                     .onSuccess { onToast(it.message ?: t(Str.UpgradeAssistDone)); tick++ }
                                     .onFailure { onToast(apiErrorMessage(lang, it)) }
                             }
-                        },
-                        onDismiss = { host.dismiss() },
+                        }, onDismiss = { host.dismiss() },
                     )
                 }
-            }) { Text(t(Str.UpgradeAssistTitle)) }
+            })
         }
 
         Column(
@@ -644,20 +634,20 @@ fun UpgradeView(
                         AppCard {
                             Column {
                                 if (assistRequired != null && assistCount != null) {
-                                    Text(t(Str.UpgradeAssistQuota, assistCount, assistRequired), style = MaterialTheme.typography.bodyMedium)
+                                    Text(t(Str.UpgradeAssistQuota, assistCount, assistRequired), fontSize = 14.sp)
                                 }
                                 if (assistLimit != null && assistRemaining != null) {
                                     Text(
                                         t(Str.UpgradeHelperQuota, (assistLimit - assistRemaining).coerceAtLeast(0), assistLimit),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp,
+                                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                     )
                                 }
                                 if (pending != null && upgraded != null) {
                                     Text(
                                         t(Str.UpgradePending, pending, upgraded),
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        fontSize = 12.sp,
+                                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                                     )
                                 }
                             }
@@ -728,7 +718,7 @@ private fun JsonSection(title: String, items: List<JsonElement>, onCancel: ((Lon
     SectionTitle(title)
     if (items.isEmpty()) {
         AppCard {
-            Text(t(Str.UpgradeEmpty), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(t(Str.UpgradeEmpty), fontSize = 12.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
         }
         return
     }
@@ -748,16 +738,14 @@ private fun JsonSection(title: String, items: List<JsonElement>, onCancel: ((Lon
                             }
                             if (isEmpty()) append(t(Str.Details))
                         },
-                        style = MaterialTheme.typography.titleSmall,
+                        fontSize = 14.sp,
                         modifier = Modifier.weight(1f),
                     )
                     if (status != null) StatusPill(status)
                     if (onCancel != null && idText != null) {
                         val rid = idText.toLongOrNull()
                         if (rid != null && status?.lowercase() in setOf("pending", "waiting", "processing", "queued", "reviewing")) {
-                            TextButton(onClick = { onCancel(rid) }) {
-                                Text(t(Str.UpgradeCancel), color = MaterialTheme.colorScheme.error)
-                            }
+                            TextButton(text = t(Str.UpgradeCancel), colors = top.yukonga.miuix.kmp.basic.ButtonDefaults.textButtonColors(color = MiuixTheme.colorScheme.error), onClick = { onCancel(rid) })
                         }
                     }
                 }

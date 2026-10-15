@@ -14,12 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import top.yukonga.miuix.kmp.basic.Button
+import top.yukonga.miuix.kmp.basic.LinearProgressIndicator
 import androidx.compose.material3.RadioButton
-import androidx.compose.material3.Text
+import top.yukonga.miuix.kmp.basic.Text
+import top.yukonga.miuix.kmp.basic.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,6 +40,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import top.yukonga.miuix.kmp.theme.MiuixTheme
 
 private enum class Step { OPTIONS, RUNNING, DONE }
 
@@ -98,13 +98,13 @@ fun UninstallWizard(args: List<String>) {
 
     if (silent) LaunchedEffect(Unit) { run() }
 
-    Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
+    Box(modifier = Modifier.fillMaxSize().background(MiuixTheme.colorScheme.background)) {
         Column(modifier = Modifier.fillMaxSize().padding(28.dp)) {
             AppLogo(52.dp)
             Spacer(Modifier.height(10.dp))
             Text(
                 if (repair) "修复 ${WinPaths.DISPLAY_NAME}" else "卸载 ${WinPaths.DISPLAY_NAME}",
-                style = MaterialTheme.typography.titleLarge,
+                fontSize = 22.sp,
             )
             Spacer(Modifier.height(16.dp))
 
@@ -134,26 +134,26 @@ fun UninstallWizard(args: List<String>) {
 
                 Step.RUNNING -> {
                     LinearProgressIndicator(
-                        progress = { progress / 100f },
+                        progress = progress / 100f,
                         modifier = Modifier.fillMaxWidth().height(8.dp),
-                        trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                    )
+                    colors = top.yukonga.miuix.kmp.basic.ProgressIndicatorDefaults.progressIndicatorColors(backgroundColor = MiuixTheme.colorScheme.surfaceContainer),
+                )
                     Spacer(Modifier.height(12.dp))
-                    Text("$progress%   $status", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Text("$progress%   $status", fontSize = 14.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
                 }
 
                 Step.DONE -> {
                     Text(
                         if (repair) "修复完成喵~" else "卸载完成，谢谢使用喵~",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 16.sp,
+                        color = MiuixTheme.colorScheme.primary,
                     )
                     Spacer(Modifier.height(10.dp))
                     if (!repair && keepData) {
                         Text(
                             "账号数据还留在 ${WinPaths.dataDir().absolutePath}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontSize = 12.sp,
+                            color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
                         )
                     }
                 }
@@ -164,7 +164,7 @@ fun UninstallWizard(args: List<String>) {
                 Spacer(Modifier.weight(1f))
                 when (step) {
                     Step.OPTIONS -> {
-                        OutlinedButton(onClick = { kotlin.system.exitProcess(0) }) { Text("取消") }
+                        TextButton(text = "取消", onClick = { kotlin.system.exitProcess(0) })
                         Button(onClick = { run() }) { Text(if (repair) "开始修复" else "开始卸载") }
                     }
                     Step.RUNNING -> Unit
@@ -183,7 +183,7 @@ private fun OptRow(selected: Boolean, title: String, desc: String, onClick: () -
             .clip(RoundedCornerShape(10.dp))
             .border(
                 1.dp,
-                if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant,
+                if (selected) MiuixTheme.colorScheme.primary else MiuixTheme.colorScheme.dividerLine,
                 RoundedCornerShape(10.dp),
             )
             .clickable { onClick() }
@@ -194,7 +194,7 @@ private fun OptRow(selected: Boolean, title: String, desc: String, onClick: () -
         Spacer(Modifier.width(6.dp))
         Column {
             Text(title, fontSize = 13.sp, fontWeight = FontWeight.Medium)
-            Text(desc, fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(desc, fontSize = 11.sp, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
         }
     }
 }

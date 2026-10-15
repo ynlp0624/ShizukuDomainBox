@@ -152,10 +152,65 @@ D:\Android\gradle-9.8.1\bin\gradle.bat -p D:\dnshe assembleRelease
 
 | 文件 | 状态 | 说明 |
 |---|---|---|
-| `Theme.kt` | ✅ | Material3 + Miuix 双主题嵌套，可逐屏迁移；品牌蓝 #3E6FD9 作为 Miuix primary |
-| `Common.kt` | ✅ | 15 个公共组件全改 Miuix；`ConfirmDialog` / `ChoiceDialog` 换成 `OverlayDialog` |
-| `AppRoot.kt` | ✅ | 底部导航 → Miuix `NavigationBar` + `miuix-icons`；Snackbar → Miuix；挂载 `MiuixPopupHost()` |
-| `DomainsScreen.kt` | ◐ | 域名页的 Scaffold / TopAppBar / FAB / IconButton 已换 Miuix；表单与对话框待办 |
+| `Theme.kt` | ✅ | Material3 + Miuix 双主题嵌套（Material3 有意保留，供过渡期用） |
+| `Common.kt` | ✅ | 全部组件 Miuix；`ConfirmDialog` / `ChoiceDialog` 用 `OverlayDialog` |
+| `AppRoot.kt` | ✅ | 底栏 Miuix `NavigationBar` + `miuix-icons`；Snackbar Miuix；挂载 `MiuixPopupHost` |
+| `DomainsScreen.kt` | ✅ | 顶栏 / FAB / 按钮 / 取色 / 字号全部 Miuix |
+| `AccountsScreen.kt` | ✅ | 同上 |
+| `ToolsScreens.kt` | ✅ | 同上 |
+| `SettingsScreen.kt` | ✅ | 同上 |
+| `RootDomainUi.kt` | ✅ | 同上 |
+
+### Material3 引用变化
+
+```
+迁移前  ≈ 240 处
+迁移后    12 处  （其中 6 处是 Theme.kt 里为双主题特意保留的）
+```
+
+剩下 6 处非 Theme.kt 的：3 个 `AlertDialog`（内容结构复杂，需配合 `OverlayDialog` 重构）、
+1 个 `DropdownMenu`（Miuix 的 `ListPopup` 需要另一套挂载）、2 个 import。
+
+### 批量迁移脚本（都在 D:\dnshe-release\）
+
+| 脚本 | 作用 |
+|---|---|
+| `swap_material.py` | 取色角色 `MaterialTheme.colorScheme.X` → `MiuixTheme.colorScheme.Y`，兼容组件的 import 直接换 |
+| `swap_topbar.py` | `TopAppBar` 的 `title = { Text(...) }` → `title = "..."`、`colors = TopAppBarDefaults...` → `color = ...` |
+| `fix_topbar.py` | 修上一步的图标尺寸位置 / 多行 title 残留 / AlertDialog 的 title |
+| `fix_step2.py` | 同上（独立成文件版） |
+| `swap_buttons2.py` | `TextButton/OutlinedButton` 的尾随 lambda 转 Miuix 形式，**内置**标签、双逗号、色彩的收尾 |
+| `swap_typography.py` | `MaterialTheme.typography.X` → 显式 `fontSize` |
+| `fix_typography.py` / `fix_truncation.py` / `fix_double.py` | 修上一步的前缀与截断问题 |
+
+### ⚠️ 写这类批量脚本的教训
+
+雫在这轮踩了**同一个坑三次**，都记下来：
+
+1. **不能用子串匹配**。`fontWeight = FontWeight.SemiBold` 里含有
+   `ontWeight = FontWeight.SemiBol`，直接 `str.replace` 会把它改成
+   `ffontWeight = FontWeight.SemiBoldd`。**必须用 `\b` 词边界**。
+
+2. **切片下标要数清楚**。`group(2)` 已经是括号内的内容了，
+   再写 `tail[1:-1]` 就会把首尾字符也切掉
+   （`fontFamily = FontFamily.Monospace` → `ontFamily = FontFamily.Monospac`）。
+
+3. **替换的"作用域"要算准**。`color = X` 这种参数名在
+   `Text(color=)`、`Icon(tint=)`、`TextButton(color=)` 里都出现，
+   全局替换会误伤一大批。**要么用括号配对扫描限定在被调函数内部，要么别做**。
+
+> 血的教训：**每个脚本跑完立刻编译一次**。雫有一次连跑三个脚本再编译，
+> 结果 222 条错误混在一起，只能整批回滚重做。
+> 好习惯是：改一步 → 编译 → 存快照（`D:\dnshe-snap\NN-xxx`）→ 再下一步。
+
+### 验证
+
+| 项 | 结果 |
+|---|---|
+| `:app:compileReleaseKotlin` | ✅ BUILD SUCCESSFUL |
+| `assembleRelease` | ✅ 11.24 MB |
+| 模拟器装机运行 | ✅ 无崩溃，四个 Tab 全部 Miuix 观感 |
+| 实拍 | `D:\miuix-trial\screens\ui-08-final.png` |
 
 **咽喉式迁移**是关键策略：所有页面都通过 `Common.kt` 里的 `AppCard` / `SectionTitle` /
 `KeyValueRow` / `StatusPill` / `AppTextField` / `SettingSwitchRow` / `EmptyState` /
