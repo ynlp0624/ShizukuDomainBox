@@ -39,6 +39,40 @@ data class NoteItem(
 /** 当前版本的更新说明 */
 val RELEASE_NOTES: List<ReleaseNote> = listOf(
     ReleaseNote(
+        version = "2.3.0",
+        date = "2026-10-18",
+        titleZh = "对接官方 API",
+        titleEn = "Official API",
+        major = true,
+        items = listOf(
+            NoteItem(
+                NoteItem.Kind.NEW,
+                "自动获取邮箱 ID：填令牌就能列出名下所有邮箱，不用再手填 mailboxId",
+                "Auto-detect mailbox IDs from your token — no more manual mailboxId",
+            ),
+            NoteItem(
+                NoteItem.Kind.NEW,
+                "支持添加附件发送（内联上传，最多 20 个）",
+                "Send attachments (inline upload, up to 20 files)",
+            ),
+            NoteItem(
+                NoteItem.Kind.NEW,
+                "一个令牌绑多个邮箱时会弹选择框，挑一个添加",
+                "Pick from your mailboxes when a token covers several",
+            ),
+            NoteItem(
+                NoteItem.Kind.IMPROVE,
+                "全面改用官方 /v1 接口与字段（mailboxId 必填、幂等键防重复发送）",
+                "Switched to the official /v1 API and fields, with idempotent sends",
+            ),
+            NoteItem(
+                NoteItem.Kind.FIX,
+                "修复保存邮箱时调用会超时的旧接口",
+                "Fixed the save flow calling an endpoint that times out",
+            ),
+        ),
+    ),
+    ReleaseNote(
         version = "2.2.0",
         date = "2026-10-18",
         titleZh = "应用内检查更新",

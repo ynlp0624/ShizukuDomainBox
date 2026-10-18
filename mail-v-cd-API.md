@@ -1,97 +1,60 @@
-# mail.v.cd 开放 API 逆向文档
+# mail.v.cd Token API
 
-> 官方尚未发布文档。本文档由 Shizuku Domain Box 项目在对接过程中逆向整理，
-> 实测于 2026-10，仅供参考。服务端随时可能调整，请自行验证。
+> 本文档整理自官方 Token API 说明（2026-10）。接口如有变动以官方为准。
 
 ## 基本信息
 
 | 项 | 值 |
 |---|---|
-| 基址 | `https://mail.v.cd/api/open` |
-| 认证 | `Authorization: Bearer <token>` |
-| 前端 | Cloudflare |
-| 后端 | Go（错误信息为 Go 风格） |
-| CORS | **未开放**，只能服务端/App 调用 |
+| 基址 | `https://mail.v.cd/api/open/v1` |
+| 认证 | `Authorization: Bearer YOUR_API_TOKEN` |
+| 错误格式 | `{"error":"error message"}` |
+| CORS | 未开放，只能服务端 / App 调用 |
 
-说明：`/v1/` 前缀与无前缀等价，两种写法都能用。
+> `/api/open/...` 与 `/api/open/v1/...` 两种写法目前都能用，但**建议统一用 `/v1`**。
 
-## 令牌
+网页登录态**不能**代替 Token。
 
-用户令牌形如 `lq_` + 43 字符 base64url，共 46 字符。在邮箱管理页面生成。
+## 令牌与 Scope
 
-**令牌只绑定一个邮箱**，无法跨邮箱使用。管理员级接口（`/domains`、`/aliases`、`/mailboxes`、`/mailboxes/{id}`）一律返回 403。
+令牌形如 `lq_` + 43 字符 base64url（共 46 字符），仅在创建时显示一次。
 
-## ID 前缀约定
-
-| 前缀 | 含义 |
+| Scope | 用途 |
 |---|---|
-| `mail_` | 邮件 |
-| `snd_` | 发信任务 |
-| `mbx_` | 邮箱 |
-| `fld_` | 文件夹 |
-| `att_` | 附件 |
-| `uid_` | IMAP UID |
+| `mailboxes:read` | 列出自己的邮箱、拿 mailboxId |
+| `messages:read` | 读邮件、读发送记录、下载附件 |
+| `messages:send` | 发信 |
+| `messages:manage` | 重试 / 取消队列发送 |
+
+Scope 不能提升账户权限，管理员接口仍仅限管理员。
 
 ## 端点一览
 
-### 发送邮件
+| 方法 | 路径 | 说明 | Scope |
+|---|---|---|---|
+| GET | `/me/mailboxes` | 列出我的邮箱及 ID | `mailboxes:read` |
+| GET | `/mailboxes/{id}/messages` | 读取邮箱邮件列表 | `messages:read` |
+| GET | `/messages/{id}` | 读取邮件详情 | `messages:read` |
+| GET | `/attachments/{id}` | 下载邮件附件 | `messages:read` |
+| POST | `/send` | 提交发送邮件 | `messages:send` |
+| GET | `/send` | 列出发送记录 | `messages:read` |
+| GET | `/send/{id}` | 查询发送状态 | `messages:read` |
+| GET | `/send/{id}/events` | 查看投递事件 | `messages:read` |
+| POST | `/send/{id}/retry` | 重试发送 | `messages:manage` |
+| POST | `/send/{id}/cancel` | 取消队列发送 | `messages:manage` |
+
+域名、全站邮箱、别名、DNS 管理接口**仅限管理员**；`/mailboxes`（不带 `/me`）不是普通用户的邮箱列表。
+
+## 1. 列出我的邮箱
 
 ```
-POST /api/open/send
+GET /me/mailboxes?limit=50&cursor=...
 ```
 
-请求体字段：
-
-| 字段 | 类型 | 说明 |
-|---|---|---|
-| `to` | string[] | 收件人，**必须是数组** |
-| `cc` | string[] | 抄送 |
-| `bcc` | string[] | 密送 |
-| `from` | string | 发件地址，必须是本人已授权地址 |
-| `fromName` | string | 发件人显示名 |
-| `subject` | string | 主题 |
-| `text` | string | 纯文本正文 |
-| `html` | string | HTML 正文 |
-| `attachments` | array | 附件引用 |
-
-**明确不支持**的字段（传了会报 `unknown field`）：
-`replyTo` / `sender` / `headers` / `template` / `tags` / `metadata` / `priority` / `sendAt` / `track` / `pgp` / `body` / `content`
-
-响应 201：
-
-```json
-{
-  "id": "snd_xxx",
-  "queueStatus": "delivered"
-}
-```
-
-`from` 必须是本人已授权地址，否则 403 `sender address is not authorized`。
-
-### 限流
-
-**每分钟最多 5 封**。
-
-超限返回错误文本：`smtp send rate limit exceeded: per-minute limit 5`
-
-注意：**不返回 `Retry-After` 头**，客户端只能自己数时间戳做本地限流。
-
-### 发信队列
-
-```
-GET  /api/open/send?limit=20
-GET  /api/open/send/{id}
-```
-
-用于查询投递状态。
-
-### 邮件列表
-
-```
-GET /api/open/mailboxes/{mailboxId}/messages?folder=Inbox&limit=20
-```
-
-`folder` 常用值：`Inbox`、`Sent`。
+| 参数 | 说明 |
+|---|---|
+| `limit` | 每页数量，默认 50，最大 100 |
+| `cursor` | 上一页返回的 `nextCursor`，URL 编码 |
 
 响应：
 
@@ -99,90 +62,213 @@ GET /api/open/mailboxes/{mailboxId}/messages?folder=Inbox&limit=20
 {
   "items": [
     {
-      "id": "mail_xxx",
-      "mailboxId": "mbx_xxx",
-      "folderId": "fld_xxx",
-      "folder": "Inbox",
-      "messageUid": "uid_xxx",
-      "imapUid": 12,
-      "imapModseq": 13,
-      "messageId": "<xxx@smtp.mail.v.cd>",
-      "threadId": "xxx@smtp.mail.v.cd",
-      "threadCount": 1,
-      "subject": "...",
-      "from": "...",
-      "to": ["..."],
-      "cc": [],
-      "bcc": [],
-      "sentAt": "...",
-      "receivedAt": "...",
-      "sizeBytes": 3072,
-      "seen": false,
-      "attachments": [...],
-      "bodyText": "",   // 列表里可能为空
-      "bodyHtml": ""
+      "id": "mbx_example",
+      "domainId": "dom_example",
+      "address": "hello@example.com",
+      "displayName": "My mailbox",
+      "quotaMb": 1024,
+      "status": "active",
+      "createdAt": "2026-10-18T00:00:00Z"
+    }
+  ],
+  "nextCursor": ""
+}
+```
+
+只返回 Token 所属账户拥有的 **active 本地邮箱**（含奖品邮箱），不含共享、外部、锁定、已删除。
+
+**`items[].id` 就是后续请求要用的 `MAILBOX_ID`。** `nextCursor` 为空表示最后一页。
+
+### 实测
+
+一个令牌可以绑定**多个**邮箱。示例令牌返回了 `shizuku@cn.mt` 和 `shizuku@v.cd` 两个。
+
+## 2. 读邮件列表
+
+```
+GET /mailboxes/{MAILBOX_ID}/messages?folder=Inbox&limit=30&q=invoice&cursor=...
+```
+
+| 参数 | 说明 |
+|---|---|
+| `folder` | 默认 `Inbox`；`all` 表示全部文件夹 |
+| `q` | 搜索词 |
+| `limit` | 默认 30，最大 100 |
+| `cursor` | 该列表的 `nextCursor` |
+
+响应里每项含 `id` / `mailboxId` / `folder` / `subject` / `from` / `to` / `sentAt` / `sizeBytes` / `attachments` 等。
+
+> 注意：列表里的 `bodyText` / `bodyHtml` 通常为空，且 `attachments` 可能缺省。要看正文和附件必须调详情接口。
+
+## 3. 邮件详情
+
+```
+GET /messages/{id}
+```
+
+返回完整字段，含：
+
+- `bodyText` / `bodyHtml`
+- `authentication: { spf, dkim, dmarc }`（多数为 `unknown`）
+- `attachments[]`：`{ id, messageId, filename, contentType, sizeBytes, createdAt }`
+
+## 4. 下载附件
+
+```
+GET /attachments/{id}
+```
+
+返回二进制流。
+
+## 5. 发送邮件
+
+```
+POST /send
+Idempotency-Key: <可选，≤128 字符，保留 24 小时>
+Content-Type: application/json
+```
+
+```json
+{
+  "mailboxId": "mbx_xxx",
+  "to": ["recipient@example.com"],
+  "cc": [],
+  "bcc": [],
+  "subject": "Hello",
+  "text": "纯文本正文",
+  "html": "<p>HTML 正文</p>",
+  "attachments": [
+    {
+      "filename": "note.txt",
+      "contentBase64": "aGVsbG8=",
+      "contentType": "text/plain"
     }
   ]
 }
 ```
 
-**重要**：列表接口返回的 `bodyText` / `bodyHtml` 常为空，要看正文必须单独请求详情。
+| 字段 | 说明 |
+|---|---|
+| `mailboxId` | **必填** |
+| `to` / `cc` / `bcc` | 地址数组，合计 1~100 个不同收件人 |
+| `subject` | 主题 |
+| `text` / `html` | 建议同时提供 `text` |
+| `attachments` | 最多 20 项，每项 `filename` + `contentBase64`（+ 可选 `contentType`） |
 
-### 邮件详情
+### 幂等
+
+- 每个新请求用**新的** `Idempotency-Key`
+- 同键同内容重试 → 不重复入队
+- 同键不同内容 → **409**
+
+### 返回值
+
+```json
+{
+  "id": "mail_xxx",
+  "queueId": "snd_xxx",
+  "queueStatus": "queued",
+  "messageId": "mail_xxx",
+  "mailboxId": "mbx_xxx",
+  "recipients": ["..."],
+  "maxAttempts": 5,
+  "nextAttemptAt": "...",
+  "createdAt": "..."
+}
+```
+
+返回已入队 **不等于** 收件方已收到，要用发送记录 ID 查状态。
+
+### 限制
+
+发信仍受账户权限、域名禁止发信、Web/API 发信开关、容量和频率限制。SMTP 客户端开关与 Web/API 发信开关**分别生效**。
+
+## 6. 投递事件
 
 ```
-GET /api/open/messages/{messageId}
+GET /send/{id}/events
 ```
 
-返回完整邮件，含：
-
-- `bodyText` / `bodyHtml`
-- `authentication: { spf, dkim, dmarc }`（多数情况为 `unknown`）
-- `attachments[]`：`{ id, filename, contentType, sizeBytes }`
-
-### 下载附件
-
+```json
+{
+  "auditEvents": [
+    {
+      "id": "audit_xxx",
+      "queueId": "snd_xxx",
+      "sentMessageId": "mail_xxx",
+      "source": "open_api",
+      "event": "queued",
+      "status": "queued",
+      "mailFrom": "...",
+      "headerFrom": "...",
+      "recipients": ["..."],
+      "createdAt": "..."
+    }
+  ]
+}
 ```
-GET /api/open/attachments/{attachmentId}
-```
 
-返回二进制流。
+## 频率限制
 
-**附件不能内联上传**：`attachments` 字段只接受已存在的附件引用，不接受 base64。
-上传端点未找到（`POST /attachments/upload` 返回 405，路径存在但方法不对）。
+实测发信限流为 **每分钟 5 封**，超限返回 `smtp send rate limit exceeded: per-minute limit 5`。
 
-## 已知限制
+服务端**不返回 `Retry-After` 头**，客户端需要自己记录时间戳做本地限流。
 
-- **无写操作**：标记已读 / 星标 / 移动 / 删除 —— 全部 404 或 405
-- **无草稿**：草稿接口不存在
-- **无法内联附件**
-- **无 CORS**：浏览器直连会被拦，必须走后端代理
+## 状态码
+
+| 码 | 含义 |
+|---|---|
+| 200 / 201 | 成功 / 已创建或已入队 |
+| 400 | 参数或游标格式错误 |
+| 401 | Token 缺失、无效、过期、已禁用，或账户不可用 |
+| 403 | 缺少 Scope / 账户权限 / 管理员身份，或发信被策略禁止 |
+| 404 | 资源不存在、不属于当前账户或不可用 |
+| 409 | 幂等键冲突（同键不同内容） |
+| 429 | 请求过于频繁 |
+| 5xx | 服务端错误 |
+
+## 已知的坑
+
+- **`GET /send` 列表接口实测会超时**（2026-10 观测，curl 60 秒无响应）。查状态优先用 `/send/{id}/events`。
+- 列表接口不带 `attachments`，附件要从详情接口读。
+- 附件用 JSON 内联 base64，单个太大可能被账户容量限制拒绝。
 
 ## 调用示例
 
 ```bash
 TOKEN="lq_xxx"
-MBX="mbx_xxx"
 
-# 列收件箱
-curl -H "Authorization: Bearer $TOKEN" \
-  "https://mail.v.cd/api/open/mailboxes/$MBX/messages?folder=Inbox&limit=10"
+# 1. 拿 mailboxId
+curl --get 'https://mail.v.cd/api/open/v1/me/mailboxes' \
+  --header "Authorization: Bearer $TOKEN" \
+  --data-urlencode 'limit=50'
 
-# 发信
-curl -X POST -H "Authorization: Bearer $TOKEN" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "to": ["someone@example.com"],
-    "from": "you@v.cd",
-    "subject": "Hello",
-    "text": "Hi there"
-  }' \
-  "https://mail.v.cd/api/open/send"
+# 2. 列收件箱
+curl --get 'https://mail.v.cd/api/open/v1/mailboxes/MBX_ID/messages' \
+  --header "Authorization: Bearer $TOKEN" \
+  --data-urlencode 'folder=Inbox' \
+  --data-urlencode 'limit=10'
+
+# 3. 发信（带附件）
+curl 'https://mail.v.cd/api/open/v1/send' \
+  --header "Authorization: Bearer $TOKEN" \
+  --header 'Content-Type: application/json' \
+  --header 'Idempotency-Key: unique-request-id-001' \
+  --data '{
+    "mailboxId":"MBX_ID",
+    "to":["recipient@example.com"],
+    "subject":"Hello",
+    "text":"Hello from DNSHE API",
+    "attachments":[{"filename":"note.txt","contentBase64":"aGVsbG8=","contentType":"text/plain"}]
+  }'
 ```
 
 ## 实现建议
 
-1. **本地限流**：记录最近 60 秒内的发送时间戳，超过 5 条就排队等待
-2. **正文懒加载**：列表页只显示主题/发件人/摘要，点进详情再拉完整正文
-3. **令牌加密存储**：移动端用 Keystore / 桌面用 DPAPI
-4. **输入规范化**：中文输入法会把 `_` 打成 `-`、`@` 打成 `＠`，务必修正
+1. **先调 `/me/mailboxes`** 拿 ID，不要手填。
+2. **令牌可能绑多个邮箱**，做好选择界面。
+3. **本地限流**：记录最近 60 秒发送时间戳，超过 5 条排队等待。
+4. **正文懒加载**：列表只显示主题/发件人/摘要，进详情再拉完整内容。
+5. **令牌加密存储**：移动端 Keystore / 桌面 DPAPI。
+6. **输入规范化**：中文输入法会把 `_` 打成 `-`、`@` 打成 `＠`，务必修正。
+7. **幂等键**：每次发送生成新 UUID；网络重试复用它。

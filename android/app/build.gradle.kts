@@ -24,8 +24,8 @@ android {
         minSdk = 26
         targetSdk = 36
         // 迁移到 Miuix 的大版本
-        versionCode = 7
-        versionName = "2.2.0"
+        versionCode = 8
+        versionName = "2.3.0"
         resourceConfigurations += listOf("zh", "en")
     }
 

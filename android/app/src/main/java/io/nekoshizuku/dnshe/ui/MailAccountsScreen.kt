@@ -38,6 +38,7 @@ import io.nekoshizuku.dnshe.data.ApiException
 import io.nekoshizuku.dnshe.data.MailApi
 import io.nekoshizuku.dnshe.data.MailFolder
 import io.nekoshizuku.dnshe.data.MailboxAccount
+import io.nekoshizuku.dnshe.data.MailboxInfo
 import io.nekoshizuku.dnshe.i18n.Str
 import io.nekoshizuku.dnshe.i18n.t
 import kotlinx.coroutines.launch
@@ -269,6 +270,8 @@ fun MailboxEditorDialog(
     var memo by remember { mutableStateOf(initial?.memo ?: "") }
     var busy by remember { mutableStateOf(false) }
     var show by remember { mutableStateOf(true) }
+    /** 非空时显示「选一个邮箱」列表 */
+    var picked by remember { mutableStateOf<List<MailboxInfo>?>(null) }
     val scope = rememberCoroutineScope()
     val ctx = LocalContext.current
 
@@ -303,21 +306,44 @@ fun MailboxEditorDialog(
             var resolvedId = normalizeInput(mailboxId)
             var resolvedAddr = normalizeInput(address)
 
-            // 没填 mailboxId 就自动探测：拉一次列表，从返回里认出来
-            if (resolvedId.isBlank()) {
-                runCatching {
-                    // 先用一个假 id 试，服务端会在错误里给出真实 id 吗？不一定。
-                    // 更稳的做法：/send 列表虽然不带 mailboxId，但发信响应会带。
-                    // 这里退一步：先验证 token，再让用户手填。
-                    api.listQueue(cleanToken, limit = 1)
-                }.onFailure { e ->
-                    busy = false
-                    if (e is ApiException && e.httpStatus == 401) {
-                        onToast(t(Str.MailVerifyFail))
-                    } else {
-                        onToast(t(Str.MailLoadFailed) + ": " + (e.message ?: ""))
+            // 没填 mailboxId 就向官方 /me/mailboxes 要一次
+            if (resolvedId.isBlank() || resolvedAddr.isBlank()) {
+                val boxes = runCatching { api.listAllMyMailboxes(cleanToken) }
+                    .getOrElse { e ->
+                        busy = false
+                        if (e is ApiException && e.httpStatus == 401) {
+                            onToast(t(Str.MailVerifyFail))
+                        } else {
+                            onToast(t(Str.MailLoadFailed) + ": " + (e.message ?: ""))
+                        }
+                        return@launch
                     }
+
+                if (boxes.isEmpty()) {
+                    busy = false
+                    onToast(t(Str.MailNoMailboxOnToken))
                     return@launch
+                }
+
+                // 地址能对上就用那个
+                val matched = boxes.firstOrNull {
+                    it.address.equals(resolvedAddr, ignoreCase = true)
+                }
+                when {
+                    matched != null -> {
+                        resolvedId = matched.id
+                        resolvedAddr = matched.address
+                    }
+                    resolvedAddr.isBlank() && boxes.size == 1 -> {
+                        resolvedId = boxes[0].id
+                        resolvedAddr = boxes[0].address
+                    }
+                    else -> {
+                        // 多个邮箱又对不上地址，弹选择框
+                        busy = false
+                        picked = boxes
+                        return@launch
+                    }
                 }
             }
 
@@ -334,6 +360,59 @@ fun MailboxEditorDialog(
             show = false
             onDismiss()
         }
+    }
+
+    /** 令牌下有多个邮箱时，让用户挑一个 */
+    fun savePicked(box: MailboxInfo) {
+        picked = null
+        busy = true
+        scope.launch {
+            busy = false
+            onSave(
+                (initial ?: MailboxAccount()).copy(
+                    name = name.trim().ifBlank { box.address.substringBefore("@") },
+                    address = box.address,
+                    token = fixToken(token),
+                    mailboxId = box.id,
+                    memo = memo.trim(),
+                )
+            )
+            show = false
+            onDismiss()
+        }
+    }
+
+    // 令牌下有多个邮箱：先让用户挑一个
+    picked?.let { boxes ->
+        OverlayDialog(
+            show = true,
+            title = t(Str.MailPickMailbox),
+            renderInRootScaffold = true,
+            onDismissRequest = { picked = null },
+        ) {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    text = t(Str.MailPickMailboxHint, boxes.size),
+                    fontSize = 12.sp,
+                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                )
+                Spacer(Modifier.height(10.dp))
+                boxes.forEach { box ->
+                    TextButton(
+                        text = box.address + if (box.quotaMb > 0) "  ·  ${box.quotaMb} MB" else "",
+                        onClick = { savePicked(box) },
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                Spacer(Modifier.height(6.dp))
+                TextButton(
+                    text = t(Str.Cancel),
+                    onClick = { picked = null },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        }
+        return
     }
 
     if (!show) return

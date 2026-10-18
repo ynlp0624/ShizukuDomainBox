@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit
  *  - 不能改已读/星标、不能移动或删除邮件（未找到端点）
  *  - 发信不支持模板、定时、自定义头部
  */
-const val MAIL_BASE_URL = "https://mail.v.cd/api/open"
+const val MAIL_BASE_URL = "https://mail.v.cd/api/open/v1"
 
 /** 发信频率限制：每分钟 5 封 */
 const val MAIL_RATE_LIMIT_PER_MINUTE = 5
@@ -74,6 +74,7 @@ class MailApi(private val logger: (RequestLogEntry) -> Unit = {}) {
         deserializer: DeserializationStrategy<T>,
         body: JsonObject? = null,
         endpointLabel: String = path,
+        extraHeaders: Map<String, String> = emptyMap(),
     ): T = withContext(Dispatchers.IO) {
         val started = System.currentTimeMillis()
         val url = MAIL_BASE_URL.trimEnd('/') + "/" + path.trimStart('/')
@@ -83,6 +84,7 @@ class MailApi(private val logger: (RequestLogEntry) -> Unit = {}) {
             .url(url)
             .header("Authorization", "Bearer $token")
             .header("Accept", "application/json")
+            .apply { extraHeaders.forEach { (k, v) -> header(k, v) } }
 
         when (method.uppercase()) {
             "GET" -> reqBuilder.get()
@@ -160,15 +162,20 @@ class MailApi(private val logger: (RequestLogEntry) -> Unit = {}) {
      *
      * @throws ApiException 429 时表示触发限流（每分钟 5 封）
      */
-    suspend fun send(token: String, compose: MailCompose): MailSendResult {
+    suspend fun send(
+        token: String,
+        compose: MailCompose,
+        idempotencyKey: String? = null,
+    ): MailSendResult {
         require(compose.isValid) { "至少需要一个收件人" }
+        require(compose.recipientCount <= 100) { "收件人最多 100 个" }
+        require(compose.attachments.size <= 20) { "附件最多 20 个" }
 
         val body = buildJsonObject {
+            if (compose.mailboxId.isNotBlank()) put("mailboxId", compose.mailboxId)
             putJsonArray("to") { compose.to.forEach { add(JsonPrimitive(it)) } }
             if (compose.cc.isNotEmpty()) putJsonArray("cc") { compose.cc.forEach { add(JsonPrimitive(it)) } }
             if (compose.bcc.isNotEmpty()) putJsonArray("bcc") { compose.bcc.forEach { add(JsonPrimitive(it)) } }
-            if (compose.from.isNotBlank()) put("from", compose.from)
-            if (compose.fromName.isNotBlank()) put("fromName", compose.fromName)
             if (compose.subject.isNotBlank()) put("subject", compose.subject)
             if (compose.text.isNotBlank()) put("text", compose.text)
             if (compose.html.isNotBlank()) put("html", compose.html)
@@ -176,15 +183,25 @@ class MailApi(private val logger: (RequestLogEntry) -> Unit = {}) {
                 putJsonArray("attachments") {
                     compose.attachments.forEach { a ->
                         addJsonObject {
-                            if (a.id.isNotBlank()) put("id", a.id)
-                            if (a.filename.isNotBlank()) put("filename", a.filename)
+                            put("filename", a.filename)
+                            put("contentBase64", a.contentBase64)
+                            if (a.contentType.isNotBlank()) put("contentType", a.contentType)
                         }
                     }
                 }
             }
         }
 
-        val result = call(token, "POST", "send", MailSendResult.serializer(), body, "send")
+        val key = idempotencyKey ?: java.util.UUID.randomUUID().toString()
+        val result = call(
+            token = token,
+            method = "POST",
+            path = "send",
+            deserializer = MailSendResult.serializer(),
+            body = body,
+            endpointLabel = "send",
+            extraHeaders = mapOf("Idempotency-Key" to key.take(128)),
+        )
         synchronized(recentSends) {
             val now = System.currentTimeMillis()
             recentSends.addLast(now)
@@ -333,6 +350,61 @@ class MailApi(private val logger: (RequestLogEntry) -> Unit = {}) {
      * 用 `GET /send?limit=1` 探测：token 无效会 401，
      * 有效则返回空列表（200）。不会真的发信。
      */
+    /* ======================== 我的邮箱（官方 /me/mailboxes） ======================== */
+
+    /**
+     * 列出 Token 所属账户下的邮箱。
+     *
+     * 这是官方推荐拿 mailboxId 的方式，比让用户手填靠谱得多。
+     * 只返回 active 的本地邮箱（不含共享、外部、锁定、已删除）。
+     */
+    suspend fun listMyMailboxes(
+        token: String,
+        limit: Int = 50,
+        cursor: String = "",
+    ): MailboxListResponse {
+        val q = buildString {
+            append("me/mailboxes?limit=").append(limit.coerceIn(1, 100))
+            if (cursor.isNotBlank()) append("&cursor=").append(java.net.URLEncoder.encode(cursor, "UTF-8"))
+        }
+        return call(token, "GET", q, MailboxListResponse.serializer(), null, "me/mailboxes")
+    }
+
+    /**
+     * 拉全所有邮箱（自动翻页）。
+     */
+    suspend fun listAllMyMailboxes(token: String): List<MailboxInfo> {
+        val out = mutableListOf<MailboxInfo>()
+        var cursor = ""
+        var guard = 0
+        while (guard++ < 20) {
+            val page = listMyMailboxes(token, limit = 100, cursor = cursor)
+            out += page.items
+            cursor = page.nextCursor
+            if (cursor.isBlank() || page.items.isEmpty()) break
+        }
+        return out
+    }
+
+    /* ======================== 发送记录与投递事件 ======================== */
+
+    /** `GET /send/{id}/events` —— 查看投递事件（queued / relayed / delivered ...） */
+    suspend fun sendEvents(token: String, sendId: String): List<SendEvent> =
+        call(
+            token, "GET", "send/$sendId/events",
+            SendEventResponse.serializer(), null, "send/events",
+        ).auditEvents
+
+    /** `POST /send/{id}/retry` —— 重试失败的发送（需要 messages:manage） */
+    suspend fun retrySend(token: String, sendId: String): MailSendResult =
+        call(token, "POST", "send/$sendId/retry", MailSendResult.serializer(),
+            buildJsonObject { }, "send/retry")
+
+    /** `POST /send/{id}/cancel` —— 取消还在队列里的发送（需要 messages:manage） */
+    suspend fun cancelSend(token: String, sendId: String): MailSendResult =
+        call(token, "POST", "send/$sendId/cancel", MailSendResult.serializer(),
+            buildJsonObject { }, "send/cancel")
+
     suspend fun verify(token: String): Boolean = try {
         listQueue(token, limit = 1)
         true

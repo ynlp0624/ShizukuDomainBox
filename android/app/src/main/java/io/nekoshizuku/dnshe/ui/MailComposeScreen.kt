@@ -1,5 +1,8 @@
 package io.nekoshizuku.dnshe.ui
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,16 +24,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.nekoshizuku.dnshe.data.ApiException
 import io.nekoshizuku.dnshe.data.MailApi
+import io.nekoshizuku.dnshe.data.MailAttachmentUpload
 import io.nekoshizuku.dnshe.data.MailCompose
 import io.nekoshizuku.dnshe.data.MailboxAccount
 import io.nekoshizuku.dnshe.i18n.Str
 import io.nekoshizuku.dnshe.i18n.t
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import android.util.Base64
 import top.yukonga.miuix.kmp.basic.Button
 import top.yukonga.miuix.kmp.basic.CircularProgressIndicator
 import top.yukonga.miuix.kmp.basic.Icon
@@ -65,8 +73,27 @@ fun MailComposeScreen(
     var showAdvanced by remember { mutableStateOf(false) }
     var sending by remember { mutableStateOf(false) }
     var remaining by remember { mutableStateOf(api.remainingQuota()) }
+    var attachments by remember { mutableStateOf<List<MailAttachmentUpload>>(emptyList()) }
+    var loadingFiles by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
+    val ctx = LocalContext.current
+
+    // 选文件 → 读成 base64（官方支持 attachments[].contentBase64，上限 20 个）
+    val pickFiles = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenMultipleDocuments()
+    ) { uris: List<Uri> ->
+        if (uris.isEmpty()) return@rememberLauncherForActivityResult
+        loadingFiles = true
+        scope.launch {
+            val added = withContext(Dispatchers.IO) {
+                uris.mapNotNull { uri -> readAttachment(ctx, uri) }
+            }
+            attachments = (attachments + added).take(20)
+            loadingFiles = false
+            if (added.isEmpty()) onToast(t(Str.MailAttachFailed))
+        }
+    }
 
     fun parseAddrs(raw: String): List<String> =
         raw.split(',', ';', '\n', ' ')
@@ -90,12 +117,13 @@ fun MailComposeScreen(
                 api.send(
                     mailbox.token,
                     MailCompose(
+                        mailboxId = mailbox.mailboxId,
                         to = recipients,
                         cc = parseAddrs(cc),
-                        from = mailbox.address,
                         subject = subject.trim(),
                         text = text,
                         html = html.trim(),
+                        attachments = attachments,
                     ),
                 )
             }.onSuccess { r ->
@@ -229,6 +257,16 @@ fun MailComposeScreen(
 
             Spacer(Modifier.height(8.dp))
 
+            // 附件
+            AttachmentSection(
+                attachments = attachments,
+                loading = loadingFiles,
+                onPick = { pickFiles.launch(arrayOf("*/*")) },
+                onRemove = { i -> attachments = attachments.filterIndexed { idx, _ -> idx != i } },
+            )
+
+            Spacer(Modifier.height(4.dp))
+
             if (showAdvanced) {
                 AppTextField(
                     value = html,
@@ -280,5 +318,94 @@ fun MailComposeScreen(
 
             Spacer(Modifier.height(24.dp))
         }
+    }
+}
+
+
+/**
+ * 把选中的文件读成 base64。
+ *
+ * 官方限制：单个附件走 JSON 内联，总大小受账户限制；这里保守限制单文件 8 MB。
+ */
+private fun readAttachment(ctx: android.content.Context, uri: Uri): MailAttachmentUpload? =
+    runCatching {
+        val resolver = ctx.contentResolver
+        val name = queryDisplayName(ctx, uri) ?: "attachment"
+        val type = resolver.getType(uri) ?: "application/octet-stream"
+        val bytes = resolver.openInputStream(uri)?.use { it.readBytes() } ?: return@runCatching null
+        if (bytes.isEmpty() || bytes.size > 8 * 1024 * 1024) return@runCatching null
+        MailAttachmentUpload(
+            filename = name,
+            contentBase64 = Base64.encodeToString(bytes, Base64.NO_WRAP),
+            contentType = type,
+        )
+    }.getOrNull()
+
+private fun queryDisplayName(ctx: android.content.Context, uri: Uri): String? =
+    runCatching {
+        ctx.contentResolver.query(uri, null, null, null, null)?.use { c ->
+            val idx = c.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+            if (idx >= 0 && c.moveToFirst()) c.getString(idx) else null
+        }
+    }.getOrNull()
+
+/**
+ * 附件区：加附件按钮 + 已选列表（可删）。
+ */
+@Composable
+private fun AttachmentSection(
+    attachments: List<MailAttachmentUpload>,
+    loading: Boolean,
+    onPick: () -> Unit,
+    onRemove: (Int) -> Unit,
+) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            TextButton(
+                text = if (loading) t(Str.MailAttaching) else t(Str.MailAddAttachment),
+                onClick = onPick,
+                enabled = !loading && attachments.size < 20,
+            )
+            Spacer(Modifier.weight(1f))
+            if (attachments.isNotEmpty()) {
+                Text(
+                    text = t(Str.MailAttachedCount, attachments.size),
+                    fontSize = 12.sp,
+                    color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                )
+            }
+        }
+        attachments.forEachIndexed { i, a ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 3.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = a.filename, fontSize = 13.sp, fontWeight = FontWeight.Medium)
+                    Text(
+                        text = humanSize(a.contentBase64),
+                        fontSize = 11.sp,
+                        color = MiuixTheme.colorScheme.onSurfaceVariantSummary,
+                    )
+                }
+                TextButton(text = t(Str.Delete), onClick = { onRemove(i) })
+            }
+        }
+    }
+}
+
+/** base64 长度换算回原始字节数，用于显示 */
+private fun humanSize(b64: String): String {
+    val bytes = (b64.length / 4) * 3 -
+        (if (b64.endsWith("==")) 2 else if (b64.endsWith("=")) 1 else 0)
+    return when {
+        bytes < 1024 -> "$bytes B"
+        bytes < 1024 * 1024 -> "${bytes / 1024} KB"
+        else -> String.format("%.1f MB", bytes / 1048576.0)
     }
 }

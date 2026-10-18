@@ -408,6 +408,13 @@ enum class Str(val zh: String, val en: String) {
     MailCollapseAdvanced("收起抄送 / HTML", "Hide Cc / HTML"),
     MailTokenRequired("Token 不能为空", "Token is required"),
     MailTokenInvalid("Token 格式不对，应该以 lq_ 开头", "Invalid token, should start with lq_"),
+    MailPickMailbox("选择邮箱", "Pick a mailbox"),
+    MailPickMailboxHint("这个令牌下有 %1\$d 个邮箱，选一个添加", "This token has %1\$d mailboxes, pick one"),
+    MailNoMailboxOnToken("这个令牌下没有可用邮箱", "No usable mailbox under this token"),
+    MailAddAttachment("添加附件", "Attach file"),
+    MailAttaching("读取中…", "Reading…"),
+    MailAttachedCount("已选 %1\$d 个", "%1\$d attached"),
+    MailAttachFailed("附件读取失败（单文件上限 8 MB）", "Could not read the file (max 8 MB each)"),
     ApiDocs("API 文档", "API docs"),
 
     /* 检查更新 */

@@ -114,37 +114,39 @@ data class MailAuth(
 /* ============================ 发信 ============================ */
 
 /**
- * 发信请求。
+ * 发信请求（按官方文档字段）。
  *
- * 实测确认支持的字段（其它字段传了会报 unknown field）：
- *   to / cc / bcc / from / fromName / subject / text / html / attachments
+ * 官方字段：mailboxId（必填）/ to / cc / bcc / subject / text / html / attachments
+ * 收件人合计 1~100 个。
  */
 @Serializable
 data class MailCompose(
+    /** 发件邮箱 ID，来自 GET /me/mailboxes */
+    val mailboxId: String = "",
     val to: List<String>,
     val cc: List<String> = emptyList(),
     val bcc: List<String> = emptyList(),
-    /** 留空则用 token 绑定的默认地址 */
-    val from: String = "",
-    val fromName: String = "",
     val subject: String = "",
     val text: String = "",
     val html: String = "",
-    val attachments: List<MailAttachmentRef> = emptyList(),
+    val attachments: List<MailAttachmentUpload> = emptyList(),
 ) {
     val isValid: Boolean get() = to.any { it.contains("@") }
+
+    /** 收件人总数，官方上限 100 */
+    val recipientCount: Int get() = to.size + cc.size + bcc.size
 }
 
 /**
- * 发信时引用附件。
+ * 发信时内联上传附件。
  *
- * 注意：**不支持内联 base64**（实测 `content` 字段会报 unknown field），
- * 只能引用已经上传的附件 id。
+ * 官方文档：attachments[] 最多 20 项，每项 filename + contentBase64（+ 可选 contentType）。
  */
 @Serializable
-data class MailAttachmentRef(
-    val id: String = "",
-    val filename: String = "",
+data class MailAttachmentUpload(
+    val filename: String,
+    val contentBase64: String,
+    val contentType: String = "application/octet-stream",
 )
 
 /** 发信成功的响应 */
@@ -204,3 +206,53 @@ enum class MailFolder(val value: String) {
     ARCHIVE("Archive"),
     OUTBOX("Outbox"),
 }
+
+/* ============================ 我的邮箱 ============================ */
+
+/** `GET /me/mailboxes` 里的单个邮箱 */
+@Serializable
+data class MailboxInfo(
+    val id: String = "",
+    val domainId: String = "",
+    val address: String = "",
+    val displayName: String = "",
+    /** 配额，单位 MB */
+    val quotaMb: Int = 0,
+    /** active / locked / deleted ... */
+    val status: String = "",
+    val createdAt: String = "",
+) {
+    val isActive: Boolean get() = status.equals("active", true)
+}
+
+/** `GET /me/mailboxes` 的响应 */
+@Serializable
+data class MailboxListResponse(
+    val items: List<MailboxInfo> = emptyList(),
+    val nextCursor: String = "",
+)
+
+/* ============================ 投递事件 ============================ */
+
+/** 发送记录的一条投递事件 */
+@Serializable
+data class SendEvent(
+    val id: String = "",
+    val queueId: String = "",
+    val mailboxId: String = "",
+    val sentMessageId: String = "",
+    val source: String = "",
+    /** queued / relayed / delivered / failed / bounced ... */
+    val event: String = "",
+    val status: String = "",
+    val mailFrom: String = "",
+    val headerFrom: String = "",
+    val recipients: List<String> = emptyList(),
+    val createdAt: String = "",
+)
+
+/** `GET /send/{id}/events` 的响应 */
+@Serializable
+data class SendEventResponse(
+    val auditEvents: List<SendEvent> = emptyList(),
+)
