@@ -614,3 +614,32 @@ fun FullScreenLoading(text: String = t(Str.Loading)) {
         Text(text, color = MiuixTheme.colorScheme.onSurfaceVariantSummary)
     }
 }
+
+
+/**
+ * 规范化用户输入的邮箱/ID：把全角符号转成半角。
+ *
+ * 中文输入法（尤其 Gboard 中文模式）会把 @ . _ - 转成全角，
+ * 用户复制粘贴时也常带进来。统一在这里纠正。
+ */
+fun normalizeInput(raw: String): String {
+    val sb = StringBuilder(raw.length)
+    for (ch in raw) {
+        sb.append(
+            when (ch) {
+                '\uFF20' -> '@'   // ＠
+                '\u3002' -> '.'   // 。
+                '\uFF0E' -> '.'   // ．
+                '\uFF3F' -> '_'   // ＿
+                '\uFF0D' -> '-'   // －
+                '\u3001' -> ','   // 、
+                '\uFF0C' -> ','   // ，
+                '\uFF1B' -> ';'   // ；
+                '\u3000' -> ' '   // 全角空格
+                '\uFF0B' -> '+'   // ＋
+                else -> ch
+            }
+        )
+    }
+    return sb.toString().replace(" ", "").trim()
+}

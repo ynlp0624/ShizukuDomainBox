@@ -2,7 +2,7 @@
 
 # 雫的域名盒 · ShizukuDomainBox
 
-**DNSHE 免费域名的多账号管理工具**
+**DNSHE 免费域名的多账号管理工具 + mail.v.cd 邮箱客户端**
 
 安卓 + Windows 双端 · 界面基于 Miuix（HyperOS 风格）
 
@@ -21,7 +21,19 @@
 - **Windows 版** —— Kotlin + Compose Multiplatform，自带 Java 运行时与自制安装程序
 - 两端**数据格式完全互通**，备份 JSON 可以互相导入
 
-> 本项目是第三方工具，与 DNSHE 官方没有隶属关系。
+### 顺带做了个邮箱客户端
+
+mail.v.cd 官方开放了 API 但没出文档，我们把它逆向出来并做成了客户端：
+
+- 收发邮件、收件箱 / 已发送分栏、搜索
+- 支持抄送 / 密送 / HTML 正文
+- 附件下载，SPF / DKIM / DMARC 验签结果显示
+- 本地限流提示（服务端限制每分钟 5 封）
+- 多邮箱账号切换，令牌用 Keystore / DPAPI 加密
+
+接口细节见 [mail-v-cd-API.md](mail-v-cd-API.md)。
+
+> 本项目是第三方工具，与 DNSHE、mail.v.cd 官方均没有隶属关系。
 
 ## 下载
 

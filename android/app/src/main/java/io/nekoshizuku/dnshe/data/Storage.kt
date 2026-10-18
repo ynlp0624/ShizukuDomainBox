@@ -45,6 +45,8 @@ data class AppSettings(
     val defaultTtl: Int = 600,
     val clipboardDetect: Boolean = true,
     val lastDomainId: Int? = null,
+    /** 上次看到的版本号（用于判断要不要弹更新说明） */
+    val lastSeenVersion: String = "",
 )
 
 class SettingsStore(private val ctx: Context) {
@@ -477,6 +479,10 @@ object AppContainer {
         private set
     lateinit var api: DnsheApi
         private set
+    lateinit var mailboxes: MailboxStore
+        private set
+    lateinit var mailApi: MailApi
+        private set
 
     val scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
@@ -487,6 +493,8 @@ object AppContainer {
         accounts = AccountStore(app)
         logs = LogStore(app)
         api = DnsheApi { entry -> logs.add(entry) }
+        mailboxes = MailboxStore(app)
+        mailApi = MailApi { entry -> logs.add(entry) }
     }
 
     fun credsOrNull(): Creds? = accounts.current?.takeIf { it.apiKey.isNotBlank() }?.creds

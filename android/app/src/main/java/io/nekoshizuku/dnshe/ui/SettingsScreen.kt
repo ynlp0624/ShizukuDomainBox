@@ -62,6 +62,7 @@ fun SettingsScreen(
     settings: AppSettings,
     onOpenLogs: () -> Unit,
     onOpenAbout: () -> Unit,
+    onOpenReleaseNotes: () -> Unit = {},
     onToast: (String) -> Unit,
 ) {
     val ctx = LocalContext.current
@@ -214,6 +215,11 @@ fun SettingsScreen(
                         title = t(Str.AboutTitle),
                         desc = "v${BuildConfig.VERSION_NAME}",
                         onClick = onOpenAbout,
+                    )
+                    SettingClickRow(
+                        title = t(Str.ReleaseNotesTitle),
+                        desc = t(Str.ReleaseNotesDesc, LATEST_VERSION),
+                        onClick = onOpenReleaseNotes,
                     )
                     SettingClickRow(
                         title = t(Str.ResetDefaults),
@@ -514,7 +520,7 @@ fun AboutScreen(onBack: () -> Unit) {
                             modifier = Modifier.size(20.dp),
                         )
                         Spacer(Modifier.width(10.dp))
-                        Text("API 文档", modifier = Modifier.weight(1f))
+                        Text(t(Str.ApiDocs), modifier = Modifier.weight(1f))
                         TextButton(text = t(Str.Ok), onClick = { ctx.openUrl(AppLinks.DOC) })
                     }
                     Row(verticalAlignment = Alignment.CenterVertically) {
