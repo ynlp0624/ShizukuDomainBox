@@ -503,6 +503,14 @@ code {
 }
 
 /* 标题内嵌的小标签（如「已停更」），不要 margin-left:auto */
+.notice-mail {
+  background: var(--brand-container);
+  border: 1px solid color-mix(in srgb, var(--brand) 16%, transparent);
+}
+.notice-mail .ico { color: var(--brand); }
+.notice-mail a { color: var(--brand); text-decoration: none; }
+.notice-mail a:hover { text-decoration: underline; }
+
 .pill-new {
   display: inline-flex;
   align-items: center;
