@@ -39,6 +39,40 @@ data class NoteItem(
 /** 当前版本的更新说明 */
 val RELEASE_NOTES: List<ReleaseNote> = listOf(
     ReleaseNote(
+        version = "2.2.0",
+        date = "2026-10-18",
+        titleZh = "应用内检查更新",
+        titleEn = "In-app updates",
+        major = true,
+        items = listOf(
+            NoteItem(
+                NoteItem.Kind.NEW,
+                "设置页可以手动检查更新，启动时也会静默检查一次",
+                "Check for updates from Settings, plus a silent check on launch",
+            ),
+            NoteItem(
+                NoteItem.Kind.NEW,
+                "发现新版本直接弹窗显示更新内容，可一键下载安装",
+                "New versions show a dialog with release notes and one-tap install",
+            ),
+            NoteItem(
+                NoteItem.Kind.NEW,
+                "同时对接 GitHub 和 GitCode，国内优先走 GitCode",
+                "Queries both GitHub and GitCode, preferring GitCode in China",
+            ),
+            NoteItem(
+                NoteItem.Kind.NEW,
+                "下载有实时进度，装不了会提示去开「安装未知来源」权限",
+                "Live download progress, with a hint when the install permission is missing",
+            ),
+            NoteItem(
+                NoteItem.Kind.IMPROVE,
+                "更新说明支持一键查看历史版本",
+                "Release notes now have a version history view",
+            ),
+        ),
+    ),
+    ReleaseNote(
         version = "2.1.0",
         date = "2026-10-18",
         titleZh = "邮箱功能来了",

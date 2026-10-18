@@ -409,6 +409,20 @@ enum class Str(val zh: String, val en: String) {
     MailTokenRequired("Token 不能为空", "Token is required"),
     MailTokenInvalid("Token 格式不对，应该以 lq_ 开头", "Invalid token, should start with lq_"),
     ApiDocs("API 文档", "API docs"),
+
+    /* 检查更新 */
+    UpdateCheckTitle("检查更新", "Check for updates"),
+    UpdateChecking("正在检查…", "Checking…"),
+    UpdateUpToDate("已经是最新版本了喵", "You are up to date"),
+    UpdateCheckFailed("检查失败", "Check failed"),
+    UpdateFound("发现新版本 v%1\$s", "Version v%1\$s available"),
+    UpdateDownloadInstall("下载并安装", "Download & install"),
+    UpdateBrowserDownload("用浏览器下载", "Download in browser"),
+    UpdateDownloading("下载中…", "Downloading…"),
+    UpdateDownloadFailed("下载失败，试试浏览器下载", "Download failed, try the browser"),
+    UpdateInstallFailed("无法调起安装器", "Could not open the installer"),
+    UpdateNeedPermission("需要允许「安装未知来源应用」", "Allow installing unknown apps first"),
+    UpdateAvailableBadge("有新版本", "Update available"),
 }
 
 fun Str.of(lang: Lang): String = when (lang) {

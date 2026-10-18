@@ -63,6 +63,8 @@ fun SettingsScreen(
     onOpenLogs: () -> Unit,
     onOpenAbout: () -> Unit,
     onOpenReleaseNotes: () -> Unit = {},
+    onCheckUpdate: () -> Unit = {},
+    updateBadge: String? = null,
     onToast: (String) -> Unit,
 ) {
     val ctx = LocalContext.current
@@ -211,6 +213,11 @@ fun SettingsScreen(
             SectionTitle(t(Str.SettingsAbout))
             AppCard {
                 Column {
+                    SettingClickRow(
+                        title = t(Str.UpdateCheckTitle),
+                        desc = updateBadge ?: "v${BuildConfig.VERSION_NAME}",
+                        onClick = onCheckUpdate,
+                    )
                     SettingClickRow(
                         title = t(Str.AboutTitle),
                         desc = "v${BuildConfig.VERSION_NAME}",

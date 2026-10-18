@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!-- 更新包下载到这里，再通过 FileProvider 交给系统安装器 -->
+    <external-files-path name="updates" path="updates/" />
+    <cache-path name="cache" path="." />
+</paths>

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -17,12 +18,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.nekoshizuku.dnshe.BuildConfig
 import io.nekoshizuku.dnshe.data.Account
 import io.nekoshizuku.dnshe.data.MailApi
 import io.nekoshizuku.dnshe.data.MailMessage
 import io.nekoshizuku.dnshe.data.MailboxAccount
 import io.nekoshizuku.dnshe.data.AppContainer
 import io.nekoshizuku.dnshe.data.Lang
+import io.nekoshizuku.dnshe.data.UpdateChecker
+import io.nekoshizuku.dnshe.data.UpdateInfo
 import io.nekoshizuku.dnshe.i18n.ProvideStrings
 import io.nekoshizuku.dnshe.i18n.Str
 import io.nekoshizuku.dnshe.i18n.t
@@ -93,6 +97,43 @@ fun AppRoot() {
 
             val mailboxes by AppContainer.mailboxes.mailboxes.collectAsState()
             val mailCurrentId by AppContainer.mailboxes.currentId.collectAsState()
+            // 更新检查
+            var updateInfo by remember { mutableStateOf<UpdateInfo?>(null) }
+            var updateState by remember { mutableStateOf<UpdateCheckState?>(null) }
+            var updateChecked by remember { mutableStateOf(false) }
+            val updater = remember { UpdateChecker() }
+
+            fun checkUpdate(silent: Boolean) {
+                if (!silent) updateState = UpdateCheckState.Checking
+                scope.launch {
+                    val r = updater.check(
+                        currentVersion = BuildConfig.VERSION_NAME,
+                        platform = UpdateChecker.Platform.ANDROID,
+                        preferGitCode = true,
+                    )
+                    r.fold(
+                        onSuccess = { info ->
+                            if (info != null) {
+                                updateState = null
+                                updateInfo = info
+                            } else if (!silent) {
+                                updateState = UpdateCheckState.UpToDate
+                            } else {
+                                updateState = null
+                            }
+                        },
+                        onFailure = { e ->
+                            if (!silent) {
+                                updateState = UpdateCheckState.Failed(e.message ?: "")
+                            } else {
+                                updateState = null
+                            }
+                        },
+                    )
+                    updateChecked = true
+                }
+            }
+
             var editingMailbox by remember { mutableStateOf<MailboxAccount?>(null) }
             var openedMail by remember { mutableStateOf<MailMessage?>(null) }
             // 更新说明：上次看到的版本 != 当前版本就弹
@@ -105,6 +146,11 @@ fun AppRoot() {
             var tab by remember { mutableStateOf<Dest>(Dest.TabDomains) }
             val stack = remember { mutableStateListOf<Dest>() }
             var refreshTick by remember { mutableIntStateOf(0) }
+
+            // 启动时静默检查一次更新（不打扰用户，只有发现新版本才弹）
+            LaunchedEffect(Unit) {
+                if (!updateChecked) checkUpdate(silent = true)
+            }
 
             val account: Account? = accounts.firstOrNull { it.id == currentId } ?: accounts.firstOrNull()
 
@@ -161,6 +207,8 @@ fun AppRoot() {
                                 onOpenLogs = { push(Dest.Logs) },
                                 onOpenAbout = { push(Dest.About) },
                                 onOpenReleaseNotes = { push(Dest.ReleaseHistory) },
+                                onCheckUpdate = { checkUpdate(silent = false) },
+                                updateBadge = updateInfo?.let { t(Str.UpdateAvailableBadge) },
                                 onToast = toast,
                             )
 
@@ -355,6 +403,28 @@ fun AppRoot() {
                     )
                     }
                 }
+                // 发现新版本
+                updateInfo?.let { info ->
+                    androidx.compose.runtime.key(info.version) {
+                        UpdateAvailableDialog(
+                            info = info,
+                            currentVersion = BuildConfig.VERSION_NAME,
+                            lang = lang,
+                            onDismiss = { updateInfo = null },
+                            onToast = toast,
+                        )
+                    }
+                }
+                // 检查中 / 已是最新 / 失败
+                updateState?.let { st ->
+                    UpdateCheckDialog(
+                        state = st,
+                        lang = lang,
+                        onDismiss = { updateState = null },
+                        onRetry = { checkUpdate(silent = false) },
+                    )
+                }
+
                 // 更新说明弹窗
                 if (showReleaseNotes) {
                     noteFor(LATEST_VERSION)?.let { note ->
