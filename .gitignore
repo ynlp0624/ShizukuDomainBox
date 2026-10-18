@@ -36,3 +36,7 @@ screens/
 screenshots/
 preview-*.png
 live-*.png
+
+# --- 部署产物 ---
+site-web.tar.gz
+tools/*.log
